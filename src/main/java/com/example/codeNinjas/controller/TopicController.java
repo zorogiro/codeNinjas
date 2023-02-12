@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/subreddit")
+@RequestMapping("/api/topic")
 @AllArgsConstructor
 @Slf4j
 public class TopicController {
@@ -35,6 +35,6 @@ public class TopicController {
     public ResponseEntity<TopicDto> getTopic(@PathVariable Long id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(topicService.getSubreddit(id));
+                .body(topicService.getTopic(id));
     }
 }

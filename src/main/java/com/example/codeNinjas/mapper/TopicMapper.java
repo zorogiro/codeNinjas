@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface TopicMapper {
 
-    @Mapping(target = "numberOfPosts", expression = "java(mapPosts(subreddit.getPosts()))")
+    @Mapping(target = "numberOfPosts", expression = "java(mapPosts(topic.getPosts()))")
     TopicDto mapTopicToDto(Topic topic);
 
     default Integer mapPosts(List<Post> numberOfPosts) {

@@ -37,9 +37,9 @@ public class TopicService {
                 .collect(toList());
     }
 
-    public TopicDto getSubreddit(Long id) {
+    public TopicDto getTopic(Long id) {
         Topic topic = topicRepository.findById(id)
-                .orElseThrow(() -> new ForumException("No subreddit found with ID - " + id));
+                .orElseThrow(() -> new ForumException("No topic found with ID - " + id));
         return topicMapper.mapTopicToDto(topic);
     }
 }

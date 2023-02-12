@@ -1,5 +1,4 @@
 package com.example.codeNinjas.controller;
-
 import com.example.codeNinjas.dto.PostRequest;
 import com.example.codeNinjas.dto.PostResponse;
 import com.example.codeNinjas.service.PostService;
@@ -35,9 +34,9 @@ public class PostController {
         return status(HttpStatus.OK).body(postService.getPost(id));
     }
 
-    @GetMapping("by-subreddit/{id}")
-    public ResponseEntity<List<PostResponse>> getPostsBySubreddit(Long id) {
-        return status(HttpStatus.OK).body(postService.getPostsBySubreddit(id));
+    @GetMapping("by-topic/{id}")
+    public ResponseEntity<List<PostResponse>> getPostsByTopic(Long id) {
+        return status(HttpStatus.OK).body(postService.getPostsByTopic(id));
     }
 
     @GetMapping("by-user/{name}")

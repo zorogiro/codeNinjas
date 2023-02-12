@@ -35,9 +35,9 @@ public class PostService {
     private final PostMapper postMapper;
 
     public void save(PostRequest postRequest) {
-        Topic subreddit = topicRepository.findByName(postRequest.getTopicName())
+        Topic topic = topicRepository.findByName(postRequest.getTopicName())
                 .orElseThrow(() -> new ForumException(postRequest.getTopicName()));
-        postRepository.save(postMapper.map(postRequest, subreddit, authService.getCurrentUser()));
+        postRepository.save(postMapper.map(postRequest, topic, authService.getCurrentUser()));
     }
 
     @Transactional(readOnly = true)
@@ -56,10 +56,10 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostResponse> getPostsBySubreddit(Long subredditId) {
-        Topic subreddit = topicRepository.findById(subredditId)
-                .orElseThrow(() -> new TopicNotFoundException(subredditId.toString()));
-        List<Post> posts = postRepository.findAllBySubreddit(subreddit);
+    public List<PostResponse> getPostsByTopic(Long topicId) {
+        Topic topic = topicRepository.findById(topicId)
+                .orElseThrow(() -> new TopicNotFoundException(topicId.toString()));
+        List<Post> posts = postRepository.findAllByTopic(topic);
         return posts.stream().map(postMapper::mapToDto).collect(toList());
     }
 
