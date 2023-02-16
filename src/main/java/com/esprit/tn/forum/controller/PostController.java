@@ -13,7 +13,7 @@ import java.util.List;
 import static org.springframework.http.ResponseEntity.status;
 
 @RestController
-@RequestMapping("/api/posts/")
+@RequestMapping("/api/posts")
 @AllArgsConstructor
 public class PostController {
 
@@ -36,7 +36,7 @@ public class PostController {
     }
 
     @GetMapping("by-topic/{id}")
-    public ResponseEntity<List<PostResponse>> getPostsByTopic(Long id) {
+    public ResponseEntity<List<PostResponse>> getPostsByTopic(@PathVariable Long id) {
         return status(HttpStatus.OK).body(postService.getPostsByTopic(id));
     }
 

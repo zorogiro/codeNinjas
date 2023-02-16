@@ -27,7 +27,7 @@ public abstract class PostMapper {
     private AuthService authService;
 
 
-    @Mapping(target = "createdDate", expression = "java(java.time.Instant.now())")
+    //@Mapping(target = "createdDate", expression = "java(java.time.Instant.now())")
     @Mapping(target = "description", source = "postRequest.description")
     @Mapping(target = "topic", source = "topic")
     @Mapping(target = "voteCount", constant = "0")
@@ -47,8 +47,8 @@ public abstract class PostMapper {
         return commentRepository.findByPost(post).size();
     }
 
-    String getDuration(Post post) {
-        return TimeAgo.using(post.getCreatedDate().toEpochMilli());
+ String getDuration(Post post) {
+        return TimeAgo.using(post.getCreatedDate().);
     }
 
     boolean isPostUpVoted(Post post) {
