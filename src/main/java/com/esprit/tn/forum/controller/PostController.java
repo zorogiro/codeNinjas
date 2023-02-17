@@ -25,9 +25,13 @@ public class PostController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<List<PostResponse>> getAllPosts() {
-        return status(HttpStatus.OK).body(postService.getAllPosts());
+    @GetMapping({"/visible"})
+    public ResponseEntity<List<PostResponse>> getAllVisiblePosts() {
+        return status(HttpStatus.OK).body(postService.getAllVisiblePosts());
+    }
+    @GetMapping({"/unvisible"})
+    public ResponseEntity<List<PostResponse>> getAllUnvisiblePosts() {
+        return status(HttpStatus.OK).body(postService.getAllUnvisiblePosts());
     }
 
     @GetMapping("/{id}")
@@ -43,5 +47,23 @@ public class PostController {
     @GetMapping("by-user/{name}")
     public ResponseEntity<List<PostResponse>> getPostsByUsername(String username) {
         return status(HttpStatus.OK).body(postService.getPostsByUsername(username));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePost(@PathVariable("id") Long postId) {
+//        try {
+            boolean deleted = postService.deletePost(postId);
+            if (deleted) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+//        } catch (PostNotFoundException e) {
+//            return ResponseEntity.notFound().build();
+//        } catch (UnauthorizedException e) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
     }
 }

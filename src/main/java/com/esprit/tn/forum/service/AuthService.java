@@ -4,6 +4,7 @@ import com.esprit.tn.forum.dto.AuthenticationResponse;
 import com.esprit.tn.forum.dto.LoginRequest;
 import com.esprit.tn.forum.dto.RefreshTokenRequest;
 import com.esprit.tn.forum.dto.RegisterRequest;
+import com.esprit.tn.forum.exceptions.BannedUserException;
 import com.esprit.tn.forum.exceptions.ForumException;
 import com.esprit.tn.forum.model.NotificationEmail;
 import com.esprit.tn.forum.model.User;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -87,18 +89,30 @@ public class AuthService {
         fetchUserAndEnable(verificationToken.orElseThrow(() -> new ForumException("Invalid Token")));
     }
 
+    //login check if the user is banned or not - if still banned he can't login
     public AuthenticationResponse login(LoginRequest loginRequest) {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
                 loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authenticate);
+
+        String username = authenticate.getName();
+        User user = userRepository.findByUsername(username).get();
+
+        //test if still banned
+        if (user.getBannedUntil() != null && LocalDateTime.now().isBefore(user.getBannedUntil())) {
+            throw new BannedUserException("You are banned from this site.");
+        }
+
         String token = jwtProvider.generateToken(authenticate);
         return AuthenticationResponse.builder()
                 .authenticationToken(token)
                 .refreshToken(refreshTokenService.generateRefreshToken().getToken())
                 .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
-                .username(loginRequest.getUsername())
+                .username(username)
                 .build();
     }
+
+
 
     public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
         refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());

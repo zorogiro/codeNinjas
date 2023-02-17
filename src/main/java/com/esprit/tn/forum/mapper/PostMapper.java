@@ -1,7 +1,7 @@
 package com.esprit.tn.forum.mapper;
 
 import com.esprit.tn.forum.model.*;
-import com.github.marlonlom.utilities.timeago.TimeAgo;
+
 import com.esprit.tn.forum.dto.PostRequest;
 import com.esprit.tn.forum.dto.PostResponse;
 import com.esprit.tn.forum.repository.CommentRepository;
@@ -27,7 +27,7 @@ public abstract class PostMapper {
     private AuthService authService;
 
 
-    //@Mapping(target = "createdDate", expression = "java(java.time.Instant.now())")
+    @Mapping(target = "createdDate", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "description", source = "postRequest.description")
     @Mapping(target = "topic", source = "topic")
     @Mapping(target = "voteCount", constant = "0")
@@ -38,7 +38,7 @@ public abstract class PostMapper {
     @Mapping(target = "topicName", source = "topic.name")
     @Mapping(target = "userName", source = "user.username")
     @Mapping(target = "commentCount", expression = "java(commentCount(post))")
-    @Mapping(target = "duration", expression = "java(getDuration(post))")
+    //@Mapping(target = "duration", expression = "java(getDuration(post))")
     @Mapping(target = "upVote", expression = "java(isPostUpVoted(post))")
     @Mapping(target = "downVote", expression = "java(isPostDownVoted(post))")
     public abstract PostResponse mapToDto(Post post);
@@ -47,9 +47,9 @@ public abstract class PostMapper {
         return commentRepository.findByPost(post).size();
     }
 
- String getDuration(Post post) {
-        return TimeAgo.using(post.getCreatedDate().);
-    }
+// String getDuration(Post post) {
+//        return TimeAgo.using(post.getCreatedDate().to);
+//    }
 
     boolean isPostUpVoted(Post post) {
         return checkVoteType(post, UPVOTE);

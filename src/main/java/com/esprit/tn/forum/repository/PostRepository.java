@@ -13,4 +13,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByTopic(Topic topic);
 
     List<Post> findByUser(User user);
+
+    List<Post> findAllByDeleted(boolean deleted);
+
+    List<Post> findAllByDeletedTrue();
 }
