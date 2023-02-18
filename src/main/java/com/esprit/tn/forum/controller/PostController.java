@@ -1,9 +1,8 @@
 package com.esprit.tn.forum.controller;
 
-import com.esprit.tn.forum.dto.PostRequest;
-import com.esprit.tn.forum.dto.PostResponse;
-import com.esprit.tn.forum.service.PostService;
-import lombok.AllArgsConstructor;
+import com.esprit.tn.forum.dto.*;
+import com.esprit.tn.forum.service.*;
+import lombok.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

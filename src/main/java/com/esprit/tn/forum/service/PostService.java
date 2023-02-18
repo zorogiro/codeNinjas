@@ -1,11 +1,14 @@
 package com.esprit.tn.forum.service;
 
-import com.esprit.tn.forum.mapper.PostMapper;
-import com.esprit.tn.forum.model.*;
 import com.esprit.tn.forum.dto.PostRequest;
 import com.esprit.tn.forum.dto.PostResponse;
 import com.esprit.tn.forum.exceptions.PostNotFoundException;
 import com.esprit.tn.forum.exceptions.TopicNotFoundException;
+import com.esprit.tn.forum.mapper.PostMapper;
+import com.esprit.tn.forum.model.BadgeType;
+import com.esprit.tn.forum.model.Post;
+import com.esprit.tn.forum.model.Topic;
+import com.esprit.tn.forum.model.User;
 import com.esprit.tn.forum.repository.PostRepository;
 import com.esprit.tn.forum.repository.TopicRepository;
 import com.esprit.tn.forum.repository.UserRepository;
@@ -40,6 +43,7 @@ public class PostService {
     public void deleteOldDeletedPostsDaily() {
         deleteOldDeletedPosts();
     }
+
     public void save(PostRequest postRequest) {
         // Map the PostRequest to a Post object
         Topic topic = topicRepository.findByName(postRequest.getTopicName())
@@ -49,6 +53,9 @@ public class PostService {
 
         // Check if the post contains any bad words
         filterPostWithBadWords(post);
+
+        // Check if the user claimed a new PostBadge
+        awardPostBadges(user);
 
         // Save the post to the database
         postRepository.save(post);
@@ -153,12 +160,26 @@ public class PostService {
             postToDelete.setDeleted(true);
             postRepository.save(postToDelete);
             return true;
-        }
-        else if(currentUser.isAdmin(currentUser)){
+        } else if (currentUser.isAdmin(currentUser)) {
             postRepository.delete(postRepository.findById(postId).get());
         }
 
         // User is not authorized to delete the post
         return false;
     }
-}
+
+    public void awardPostBadges(User user) {
+            int postCount = postRepository.countByUser(user);
+            if (postCount > 10) {
+                user.setPostBadge(BadgeType.GOLD);
+            } else if (postCount > 5) {
+                user.setPostBadge(BadgeType.SILVER);
+            } else if (postCount > 0) {
+                user.setPostBadge(BadgeType.BRONZE);
+            }
+            userRepository.save(user);
+        }
+    }
+
+
+

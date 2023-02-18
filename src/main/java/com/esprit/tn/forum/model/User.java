@@ -10,7 +10,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Data
@@ -34,10 +36,16 @@ public class User {
     private TypeUser typeUser;
     private int alertCount;
     private LocalDateTime bannedUntil;
+    @Enumerated(EnumType.STRING)
+    public BadgeType postBadge;
+    @Enumerated(EnumType.STRING)
+    public BadgeType CommentBadge;
     public boolean isAdmin(User user) {
         return user.getTypeUser().equals("Admin");
     }
     private enum TypeUser {
         Recruter , Admin , Candidate
     }
+
+
 }

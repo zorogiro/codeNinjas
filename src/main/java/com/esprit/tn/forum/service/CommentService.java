@@ -1,12 +1,9 @@
 package com.esprit.tn.forum.service;
 
-import com.esprit.tn.forum.mapper.CommentMapper;
-import com.esprit.tn.forum.model.Post;
 import com.esprit.tn.forum.dto.CommentsDto;
 import com.esprit.tn.forum.exceptions.PostNotFoundException;
-import com.esprit.tn.forum.model.Comment;
-import com.esprit.tn.forum.model.NotificationEmail;
-import com.esprit.tn.forum.model.User;
+import com.esprit.tn.forum.mapper.CommentMapper;
+import com.esprit.tn.forum.model.*;
 import com.esprit.tn.forum.repository.CommentRepository;
 import com.esprit.tn.forum.repository.PostRepository;
 import com.esprit.tn.forum.repository.UserRepository;
@@ -32,18 +29,23 @@ public class CommentService {
     private final MailContentBuilder mailContentBuilder;
     private final MailService mailService;
 
-public void save(CommentsDto commentsDto) {
-    // Check if the comment contains bad words
-    filterCommentWithBadWords(commentsDto);
+    public void save(CommentsDto commentsDto) {
+        // Check if the comment contains bad words
+        filterCommentWithBadWords(commentsDto);
 
-    Post post = postRepository.findById(commentsDto.getPostId())
-            .orElseThrow(() -> new PostNotFoundException(commentsDto.getPostId().toString()));
-    Comment comment = commentMapper.map(commentsDto, post, authService.getCurrentUser());
-    commentRepository.save(comment);
 
-    String message = mailContentBuilder.build(post.getUser().getUsername() + " posted a comment on your post." + POST_URL);
-    sendCommentNotification(message, post.getUser());
-}
+        User user = authService.getCurrentUser();
+        Post post = postRepository.findById(commentsDto.getPostId())
+                .orElseThrow(() -> new PostNotFoundException(commentsDto.getPostId().toString()));
+        Comment comment = commentMapper.map(commentsDto, post, user);
+
+        awardCommentBadges(user);
+
+        commentRepository.save(comment);
+
+//        String message = mailContentBuilder.build(post.getUser().getUsername() + " posted a comment on your post." + POST_URL);
+//        sendCommentNotification(message, post.getUser());
+    }
 
     private void sendCommentNotification(String message, User user) {
         mailService.sendMail(new NotificationEmail(user.getUsername() + " Commented on your post", user.getEmail(), message));
@@ -88,4 +90,19 @@ public void save(CommentsDto commentsDto) {
             }
         }
     }
+
+
+    public void awardCommentBadges(User user) {
+        int commentCount = commentRepository.countByUser(user);
+        if (commentCount> 10) {
+            user.setCommentBadge(BadgeType.GOLD);
+        } else if (commentCount > 5) {
+            user.setCommentBadge(BadgeType.SILVER);
+        } else if (commentCount > 0) {
+            user.setCommentBadge(BadgeType.BRONZE);
+        }
+
+        userRepository.save(user);
+    }
 }
+

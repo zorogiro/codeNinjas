@@ -17,4 +17,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByDeleted(boolean deleted);
 
     List<Post> findAllByDeletedTrue();
+
+    int countByUser(User user);
 }
