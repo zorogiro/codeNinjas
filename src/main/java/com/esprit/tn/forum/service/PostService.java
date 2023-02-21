@@ -5,10 +5,7 @@ import com.esprit.tn.forum.dto.PostResponse;
 import com.esprit.tn.forum.exceptions.PostNotFoundException;
 import com.esprit.tn.forum.exceptions.TopicNotFoundException;
 import com.esprit.tn.forum.mapper.PostMapper;
-import com.esprit.tn.forum.model.BadgeType;
-import com.esprit.tn.forum.model.Post;
-import com.esprit.tn.forum.model.Topic;
-import com.esprit.tn.forum.model.User;
+import com.esprit.tn.forum.model.*;
 import com.esprit.tn.forum.repository.PostRepository;
 import com.esprit.tn.forum.repository.TopicRepository;
 import com.esprit.tn.forum.repository.UserRepository;
@@ -37,6 +34,9 @@ public class PostService {
     private final TopicRepository topicRepository;
     private final UserRepository userRepository;
     private final AuthService authService;
+
+    private final MailService mailService;
+    private final NotificationService notificationService;
     private final PostMapper postMapper;
 
     @Scheduled(cron = "0 0 0 * * ?") // every day at 00:00
@@ -73,10 +73,18 @@ public class PostService {
                 User user = post.getUser();
                 int alertCount = user.getAlertCount();
                 user.setAlertCount(alertCount + 1);
+                notificationService.sendNotification(user,"your alert count is now " + alertCount + "remember that you will be ban ished after the 3rd bad word ");
+
 
                 // If the user has been alerted three times, ban them for three days
                 if (alertCount >= 3) {
                     user.setBannedUntil(LocalDateTime.now().plusDays(3));
+                    mailService.sendMail(new NotificationEmail("your account is now blocked for 3 days ",
+                            user.getEmail(), "Thank you for uderstanding, " +
+                            "please click on the below url to send an e3tiradh  : " +
+                            "http://localhost:8081/api/auth/e3tiradh/"));
+
+
                 }
 
                 // Remove the bad word from the comment

@@ -8,11 +8,11 @@
         <version>2.6.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.programming.techie</groupId>
-    <artifactId>spring-reddit-clone</artifactId>
+    <groupId>com.esprit.tn</groupId>
+    <artifactId>forum</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>spring-reddit-clone</name>
-    <description>Demo project for Spring Boot</description>
+    <name>sforum</name>
+    <description>PIDev</description>
 
     <properties>
         <java.version>1.8</java.version>

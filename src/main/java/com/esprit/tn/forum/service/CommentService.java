@@ -28,6 +28,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final MailContentBuilder mailContentBuilder;
     private final MailService mailService;
+    private final NotificationService notificationService;
 
     public void save(CommentsDto commentsDto) {
         // Check if the comment contains bad words
@@ -43,8 +44,7 @@ public class CommentService {
 
         commentRepository.save(comment);
 
-//        String message = mailContentBuilder.build(post.getUser().getUsername() + " posted a comment on your post." + POST_URL);
-//        sendCommentNotification(message, post.getUser());
+
     }
 
     private void sendCommentNotification(String message, User user) {
@@ -78,10 +78,17 @@ public class CommentService {
                 User user = authService.getCurrentUser();
                 int alertCount = user.getAlertCount();
                 user.setAlertCount(alertCount + 1);
+                notificationService.sendNotification(user,"your alert count is now " + alertCount + "remember that you will be ban ished after the 3rd bad word ");
+
 
                 // If the user has been alerted three times, ban them for three days
                 if (alertCount >= 3) {
                     user.setBannedUntil(LocalDateTime.now().plusDays(3));
+                    mailService.sendMail(new NotificationEmail("your account is now blocked for 3 days ",
+                            user.getEmail(), "Thank you for uderstanding, " +
+                            "please click on the below url to send an e3tiradh  : " +
+                            "http://localhost:8081/api/auth/e3tiradh/"));
+
                 }
 
                 // Remove the bad word from the comment
