@@ -21,6 +21,6 @@ public class Country implements Serializable {
     private int idCountry;
     private String name;
     private String continent;
-   // @OneToOne(mappedBy = "country")
-    //private University university;
+    @OneToOne(mappedBy = "country")
+    private University university;
 }

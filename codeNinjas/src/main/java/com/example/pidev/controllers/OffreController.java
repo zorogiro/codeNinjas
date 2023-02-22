@@ -1,12 +1,14 @@
 package com.example.pidev.controllers;
 
 import com.example.pidev.entities.Offer;
+import com.example.pidev.entities.TypeOffer;
 import com.example.pidev.service.OfferService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/Offre")
@@ -47,6 +49,12 @@ public class OffreController {
 
         offerService.deleteOffre(OffreId);
         return offerService.retrieveAllOffre();
+
+    }
+
+    @GetMapping("/byTypeOffer")
+    public Map<TypeOffer,Integer> getAllTypeOffer(TypeOffer typeOffer){
+        return offerService.getOfferByType(typeOffer);
 
     }
 

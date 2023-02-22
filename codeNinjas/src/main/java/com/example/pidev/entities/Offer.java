@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,12 +24,13 @@ public class Offer implements Serializable {
     @Column(name = "idOffer")
     private Integer idOffer;
     private String title;
-    private String image;
     private String description;
     private double scoreOffer;
     private Date dateCreation;
     private int nbrPlaceDisponible;
-    private Date dateExpiration;
+    private LocalDateTime dateExpiration;
+    private TypeOffer typeOffer;
+    private boolean applied;
     @ManyToOne
     private User recruiter;
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "offer")
@@ -36,4 +39,6 @@ public class Offer implements Serializable {
     private List<Feedback> feedbacks;
     @ManyToOne
     University universities;
+
+
 }

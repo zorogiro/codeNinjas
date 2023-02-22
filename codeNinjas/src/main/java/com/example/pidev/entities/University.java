@@ -20,8 +20,11 @@ public class University implements Serializable {
     @Id
     private Integer idUniversity;
     private String name;
-   // @OneToOne
-   // private Country country;
+    private String Email;
+    private String image;
+
+     @OneToOne
+    private Country country;
     @OneToOne
     private User recruiter;
     @OneToMany(cascade = CascadeType.ALL, mappedBy="universities")
