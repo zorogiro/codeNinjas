@@ -6,8 +6,13 @@ import com.example.pidev.repository.FeedbackRepository;
 import com.example.pidev.repository.OfferRepositroy;
 import com.example.pidev.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -35,6 +40,10 @@ public class candidatFeedbackService implements IcandidatFeedback{
         f.setUser(user);
         Offer offer= this.offerRepositroy.getReferenceById(idoffer);
         f.setOffer(offer);
+        f.setDateCreation(new Date());
+
+
+
         return this.feedbackRepository.save(f);
     }
 
@@ -56,4 +65,39 @@ public class candidatFeedbackService implements IcandidatFeedback{
     public double calculerMoyenneReclamationsParUtilisateur() {
         return feedbackRepository.count();
     }
+
+
+
+    public void processFeedbacksByPriority() {
+        List<Feedback> feedbacks = feedbackRepository.findAllByOrderByPriorityDesc();
+        for (Feedback feedback : feedbacks) {
+            // traiter le feedback en fonction de sa priorité
+        }
+    }
+
+    @Configuration
+    @EnableScheduling
+    public class SchedulerConfig {
+        @Autowired
+
+        private candidatFeedbackService candidatFeedbackService;
+
+        @Scheduled(fixedDelay = 60000) // exécuter la méthode toutes les minutes
+        public void processFeedbacksByPriority() {
+            candidatFeedbackService.processFeedbacksByPriority();
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

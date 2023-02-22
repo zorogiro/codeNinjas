@@ -38,5 +38,7 @@ public class Feedback  implements Serializable {
     @JsonIgnore
     private Candidacy candidacy;
     private Date dateCreation;
+    private int rating;
+    private String priority;
 
 }

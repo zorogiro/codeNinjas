@@ -3,15 +3,20 @@ package com.example.pidev.controller;
 
 import com.example.pidev.entities.Feedback;
 
+import com.example.pidev.repository.FeedbackRepository;
 import com.example.pidev.repository.UserRepository;
 import com.example.pidev.services.IrecruiterFeedbackService;
 import com.example.pidev.services.candidatFeedbackService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -83,18 +88,30 @@ public class FeedbackController {
     }
 
 
+    @Autowired
+    private FeedbackRepository feedbackRepository;
+
+    @Transactional
+    @GetMapping("/stats-by-date")
+    public List<FeedbackStats> getFeedbackStatsByDate() {
+        List<Object[]> data = feedbackRepository.findFeedbackStatsByDate();
+        return data.stream()
+                .map(row -> new FeedbackStats((Date) row[0], (Long) row[1], (Double) row[2]))
+                .collect(Collectors.toList());
+    }
+
+    public static class FeedbackStats  {
+        public Date date;
+        public long count;
+        public double average;
 
 
 
+        public FeedbackStats(Date date, long count, double average) {
+            this.date = date;
+            this.count = count;
+            this.average = average;
 
-
-
-
-
-
-
-
-
-
+        }}
 
 }
