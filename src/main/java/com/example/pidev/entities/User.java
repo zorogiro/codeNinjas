@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.NotFound;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 
 import javax.persistence.*;
@@ -21,7 +22,6 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "User")
-
 public class User  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

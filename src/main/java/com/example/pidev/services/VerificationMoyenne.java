@@ -1,6 +1,9 @@
 package com.example.pidev.services;
 
+import com.example.pidev.entities.Matiere;
+import com.example.pidev.entities.Score;
 import com.example.pidev.entities.User;
+import com.example.pidev.repositories.CandidateInformation;
 import com.example.pidev.repositories.UserRepository;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
@@ -20,15 +23,14 @@ import org.apache.tika.mime.MimeTypes;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 import java.io.*;
 import java.net.MalformedURLException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 @AllArgsConstructor
@@ -36,8 +38,9 @@ import java.util.regex.Pattern;
 @Service
 public class VerificationMoyenne {
 
-    UserRepository userRepositoryy;
-
+    @Autowired
+     UserRepository userRepositoryy;
+    CandidateInformation candidateInformation;
     public  boolean contains(int idUser,File file, String s,int note) throws MalformedURLException,
             IOException, MimeTypeException, SAXException,TikaException {
         ContentHandler handler = new BodyContentHandler();
@@ -86,7 +89,7 @@ public class VerificationMoyenne {
         }*/
         return  last.toString().toLowerCase().contains(String.valueOf(note).toLowerCase());
     }
-    public static Map<String, Map<String, String>> calculscore() throws IOException, CsvValidationException {
+    public  Score calculscore() throws IOException, CsvValidationException {
 
         String csvFilePath = "C:\\Users\\pc\\Downloads\\codeNinjas-houssem\\src\\main\\java\\com\\example\\pidev\\services\\releve.csv";
         Map<String, Map<String, String>> CSVData = new TreeMap<String, Map<String, String>>();
@@ -106,7 +109,53 @@ public class VerificationMoyenne {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return CSVData;
+        Score score = new Score();
+        List<Matiere> matieres = new ArrayList<>();
+        User user=new User();
+        for(Map.Entry<String,Map<String,String>> entry:CSVData.entrySet()){
+            //System.err.println("------"+entry.getKey());
+            if(entry.getKey().equals("CIN"))
+            {
+                List<User> users=this.userRepositoryy.findAll();
+                for (User user1 : users){
+                    if(user1.getCin().equals("0"+entry.getValue().get("")))
+                        user=user1;
+                }
+
+            }
+
+
+            if(!(entry.getKey().equals("Nom")) && !(entry.getKey().equals("Prenom")) &&
+                    !(entry.getKey().equals("CIN"))){
+                Matiere matiere = new Matiere();
+
+
+                  if(!entry.getValue().get("Moyenne").equals("")) {
+                      if(entry.getValue().get("Matieres").equals("MG")){
+                          score.setMoyenneGenerale(Float.valueOf(entry.getValue().get("Moyenne")));
+                      }
+                      else {
+                          matiere.setMoyenneMatiere(Float.valueOf(entry.getValue().get("Moyenne")));
+                          matiere.setNomMatiere(entry.getValue().get("Matieres"));
+
+                      }
+
+                    matieres.add(matiere);
+                }
+
+            }
+        }
+        score.setMatieres(matieres);
+        score.setUser(user);
+        //this.candidateInformation.findAll().forEach(item -> System.out.println(item.getMoyenneGenerale()));
+        try {
+            this.candidateInformation.save(score);
+        }catch (Exception e){
+            System.err.println(e.toString());
+        }
+
+        return score;
+        //return CSVData;
     }
 
 }

@@ -1,9 +1,6 @@
 package com.example.pidev.controllers;
 
-import com.example.pidev.entities.Candidacy;
-import com.example.pidev.entities.Matiere;
-import com.example.pidev.entities.Score;
-import com.example.pidev.entities.StatCandidacy;
+import com.example.pidev.entities.*;
 import com.example.pidev.services.CandidateCandidacyService;
 import com.example.pidev.services.VerificationMoyenne;
 import com.opencsv.exceptions.CsvValidationException;
@@ -25,6 +22,7 @@ import java.util.Map;
 @RequestMapping("/candidacy")
 public class CandidateCandidacyController {
     CandidateCandidacyService candidateCandidacyService;
+    VerificationMoyenne verificationMoyenne;
 
     @Transactional
     @PostMapping("/addCandidacy/{idCandidate}/{cinCandidate}/{idOffer}")
@@ -55,29 +53,10 @@ public class CandidateCandidacyController {
     }
 
     @GetMapping("/kk")
-    public Map<String, Map<String, String>> verif() throws TikaException, IOException, SAXException, CsvValidationException {
-        System.out.println("+++++++++++++++++++++Code For CSV Parser++++++++++++");
-        Map<String, Map<String, String>> CSV = VerificationMoyenne.calculscore();
-        Iterator<String> keys = CSV.keySet().iterator();
-        Score score = new Score();
-        List<Matiere> matieres = new ArrayList<>();
-        while (keys.hasNext()) {
-            String primaryKey = keys.next();
-            Matiere matiere = new Matiere();
-            matiere.setNomMatiere(primaryKey);
-            matiere.setMoyenneMatiere(Float.valueOf(CSV.getOrDefault(primaryKey, null).get("Moyenne")));
-            matieres.add(matiere);
+    public Score verif() throws TikaException, IOException, SAXException, CsvValidationException {
 
-            // System.err.println(CSV.getOrDefault(primaryKey,null).get("Moyenne"));
-            //System.err.println(primaryKey);
-            //System.out.println("Emp Id: "+primaryKey);
-            //System.out.println(CSV.get("MG").toString());
-        }
-        score.setMatieres(matieres);
-        for (Matiere matiere : score.getMatieres()) {
-            System.err.println("** Matiere :" + matiere.getNomMatiere() + "  ** moyenne : " + matiere.getMoyenneMatiere());
-        }
-        System.out.println(CSV.entrySet().toArray().toString());
-        return VerificationMoyenne.calculscore();
+        return verificationMoyenne.calculscore();
+
+
     }
 }
