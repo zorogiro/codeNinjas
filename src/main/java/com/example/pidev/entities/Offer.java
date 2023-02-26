@@ -28,6 +28,8 @@ public class Offer implements Serializable {
     private Date dateCreation;
     private int nbrPlaceDisponible;
     private Date dateExpiration;
+    @Enumerated(EnumType.STRING)
+    private TypeOffer typeOffer;
     @ManyToOne
     private User recruiter;
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "offer")

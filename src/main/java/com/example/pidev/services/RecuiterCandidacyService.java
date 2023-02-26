@@ -29,7 +29,7 @@ public class RecuiterCandidacyService  implements IRecuiterCandidacyService{
     AppointmentRepository appointmentRepository;
     @Override
     public Candidacy makeCandidacyOnProcessing(int idcandidacy) {
-        Candidacy candidacy=this.candidacyRepository.findById(idcandidacy).get();
+        Candidacy candidacy=this.candidacyRepository.getReferenceById(idcandidacy);
         if(candidacy != null) {
             candidacy.setTypeCandidacy(TypeCandidacy.Processing);
             return this.candidacyRepository.save(candidacy);

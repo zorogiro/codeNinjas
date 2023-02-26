@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -39,15 +40,19 @@ public class User  implements Serializable {
     private Date dateCreation;
     @OneToOne(mappedBy = "recruiter")
     @JsonIgnore
+    @NotFound(action = NotFoundAction.IGNORE)
     private University university;
     @OneToMany(mappedBy = "candidate")
     @JsonIgnore
+    @NotFound(action = NotFoundAction.IGNORE)
     private List<Candidacy> candidacies;
     @OneToMany(mappedBy = "recruiter")
     @JsonIgnore
+    @NotFound(action = NotFoundAction.IGNORE)
     private List<Offer> offres;
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "user")
     @JsonIgnore
+    @NotFound(action = NotFoundAction.IGNORE)
     private List<Feedback> feedbacks;
 
 }

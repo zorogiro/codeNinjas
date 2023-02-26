@@ -4,16 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import javax.persistence.Id;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document
-public class Matiere {
-    private String nomMatiere;
-    private float moyenneMatiere;
+public class FileUploadResponse {
+    private String fileName;
+    private String downloadUri;
+    private long size;
 }

@@ -19,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "Candidacy")
+
 public class Candidacy implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +27,10 @@ public class Candidacy implements Serializable {
     private int idCandidacy;
     @ManyToOne
     @JsonIgnore
+    @NotFound(action = NotFoundAction.IGNORE)
     private User candidate;
     @ManyToOne
+    @JsonIgnore
     @NotFound(action = NotFoundAction.IGNORE)
     private Offer offer;
     @OneToOne(mappedBy = "candidacy")
@@ -39,5 +42,6 @@ public class Candidacy implements Serializable {
     private TypeCandidacy typeCandidacy;
     @OneToMany(mappedBy = "candidacy")
     @JsonIgnore
+    @NotFound(action = NotFoundAction.IGNORE)
     private List<Feedback> feedbacks;
 }

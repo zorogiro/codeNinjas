@@ -1,9 +1,7 @@
 package com.example.pidev.services;
 
-import com.example.pidev.entities.Matiere;
-import com.example.pidev.entities.Score;
-import com.example.pidev.entities.User;
-import com.example.pidev.repositories.CandidateInformation;
+import com.example.pidev.entities.*;
+import com.example.pidev.repositories.CandidacyRepository;
 import com.example.pidev.repositories.UserRepository;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
@@ -30,19 +28,24 @@ import org.xml.sax.SAXException;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Service
 public class VerificationMoyenne {
 
     @Autowired
      UserRepository userRepositoryy;
-    CandidateInformation candidateInformation;
+    @Autowired
+    CandidacyRepository candidacyRepository;
+
     public  boolean contains(int idUser,File file, String s,int note) throws MalformedURLException,
-            IOException, MimeTypeException, SAXException,TikaException {
+            IOException, SAXException,TikaException {
+
         ContentHandler handler = new BodyContentHandler();
         MimeTypes mimeRegistry = TikaConfig.getDefaultConfig().getMimeRepository();
         Detector mimeDetector = (Detector) mimeRegistry;
@@ -89,10 +92,11 @@ public class VerificationMoyenne {
         }*/
         return  last.toString().toLowerCase().contains(String.valueOf(note).toLowerCase());
     }
-    public  Score calculscore() throws IOException, CsvValidationException {
+    public  Score calculscore(int idCandidacy,String fileName) throws IOException {
 
-        String csvFilePath = "C:\\Users\\pc\\Downloads\\codeNinjas-houssem\\src\\main\\java\\com\\example\\pidev\\services\\releve.csv";
+        String csvFilePath = "C:\\Users\\pc\\Downloads\\codeNinjas-houssem\\src\\main\\java\\com\\example\\pidev\\Files-Upload\\"+fileName;
         Map<String, Map<String, String>> CSVData = new TreeMap<String, Map<String, String>>();
+        Path root = Paths.get("C:\\Users\\pc\\Downloads\\codeNinjas-houssem\\src\\main\\java\\com\\example\\pidev\\Files-Upload");
         Map<String, String> keyVals = null;
         Reader reader = new FileReader(csvFilePath);
         try {
@@ -111,7 +115,7 @@ public class VerificationMoyenne {
         }
         Score score = new Score();
         List<Matiere> matieres = new ArrayList<>();
-        User user=new User();
+        String user=null;
         for(Map.Entry<String,Map<String,String>> entry:CSVData.entrySet()){
             //System.err.println("------"+entry.getKey());
             if(entry.getKey().equals("CIN"))
@@ -119,7 +123,7 @@ public class VerificationMoyenne {
                 List<User> users=this.userRepositoryy.findAll();
                 for (User user1 : users){
                     if(user1.getCin().equals("0"+entry.getValue().get("")))
-                        user=user1;
+                        user=user1.getCin();
                 }
 
             }
@@ -146,14 +150,50 @@ public class VerificationMoyenne {
             }
         }
         score.setMatieres(matieres);
-        score.setUser(user);
-        //this.candidateInformation.findAll().forEach(item -> System.out.println(item.getMoyenneGenerale()));
-        try {
-            this.candidateInformation.save(score);
-        }catch (Exception e){
-            System.err.println(e.toString());
-        }
+        score.setCinUser(user);
+        Candidacy candidacy=candidacyRepository.getReferenceById(idCandidacy);
+        System.err.println("-------"+candidacy.getIdCandidacy());
+        if(candidacy.getOffer().getTypeOffer().equals(TypeOffer.SAE)){
+            float total=0;
+            List<Matiere> matieres1=score.getMatieres();
+            System.err.println("+++++"+matieres.size());
+            for(Matiere matiere:matieres){
+                if(matiere.getNomMatiere()!=null && matiere.getNomMatiere()!="") {
+                    if (matiere.getNomMatiere().equals("Archntiers")) {
+                        total = total + (matiere.getMoyenneMatiere() * 3);
+                        System.err.println("++ Archn-tiers+++");
+                    }  if (matiere.getNomMatiere().equals("Stage")) {
+                        total += matiere.getMoyenneMatiere();
+                        System.err.println("++ Stage+++");
+                    }  if (matiere.getNomMatiere().equals("ASEAvance")) {
+                        total += matiere.getMoyenneMatiere();
+                        System.err.println("++ ASEAvance+++");
+                    }  if (matiere.getNomMatiere().equals("Fran�ais")) {
+                        total += matiere.getMoyenneMatiere() * (3 / 2);
+                        System.err.println("++Fran�ais+++");
+                    }  if (matiere.getNomMatiere().equals("Anglais")) {
+                        total += matiere.getMoyenneMatiere() * (3 / 2);
+                        System.err.println("++Anglais+++");
+                    }
+                }
+            }
 
+            total+=score.getMoyenneGenerale()*(3/2);
+            System.err.println(total+"====");
+            score.setScoreTotale(total);
+            if(candidacy.getOffer().getScoreOffer()<=score.getScoreTotale())
+                score.setAccepted(true);
+            else
+                score.setAccepted(false);
+            score.setFile(new File(csvFilePath));
+            try {
+                Path file = root.resolve(csvFilePath);
+                 Files.deleteIfExists(file);
+            } catch (IOException e) {
+                throw new RuntimeException("Error: " + e.getMessage());
+            }
+        }
+        //this.candidateInformation.findAll().forEach(item -> System.out.println(item.getMoyenneGenerale()));
         return score;
         //return CSVData;
     }

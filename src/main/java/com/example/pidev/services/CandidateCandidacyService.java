@@ -31,7 +31,9 @@ public class CandidateCandidacyService implements ICandidateCandidacyService{
         System.out.println(offer.getScoreOffer());
         if(user.getTypeUser().equals(TypeUser.Candidate))
         {
+
             candidacy.setCandidate(user);
+            System.err.println("****"+candidacy.getCandidate().getCin());
             candidacy.setTypeCandidacy(TypeCandidacy.OnHold);
             candidacy.setOffer(offer);
             return this.candidacyRepository.save(candidacy);
