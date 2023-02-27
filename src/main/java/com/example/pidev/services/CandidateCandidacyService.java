@@ -1,6 +1,7 @@
 package com.example.pidev.services;
 
 import com.example.pidev.entities.*;
+import com.example.pidev.repositories.AppointmentRepository;
 import com.example.pidev.repositories.CandidacyRepository;
 import com.example.pidev.repositories.OfferRepository;
 import com.example.pidev.repositories.UserRepository;
@@ -10,6 +11,9 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -22,8 +26,10 @@ public class CandidateCandidacyService implements ICandidateCandidacyService{
     OfferRepository offerRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    AppointmentRepository appointmentRepository;
     @Override
-    public Candidacy addCandidacy(int idCandidate, int idOffer,Candidacy candidacy) {
+    public Candidacy addCandidacy(int idCandidate, int idOffer) {
 
         User user=this.userRepository.findById(idCandidate).get();
         System.out.println(user.getTypeUser());
@@ -31,11 +37,15 @@ public class CandidateCandidacyService implements ICandidateCandidacyService{
         System.out.println(offer.getScoreOffer());
         if(user.getTypeUser().equals(TypeUser.Candidate))
         {
+            Candidacy candidacy=new Candidacy();
 
             candidacy.setCandidate(user);
             System.err.println("****"+candidacy.getCandidate().getCin());
             candidacy.setTypeCandidacy(TypeCandidacy.OnHold);
             candidacy.setOffer(offer);
+
+            Date date= java.sql.Date.valueOf(new LocalDate().toString());
+            candidacy.setDateCreation(date);
             return this.candidacyRepository.save(candidacy);
         }
         return null;
@@ -43,8 +53,15 @@ public class CandidateCandidacyService implements ICandidateCandidacyService{
 
     @Override
     public void deleteCandidacy(int idCandidacy) {
+        List<Appointment> appointments=appointmentRepository.findAll();
+        Candidacy candidacy=candidacyRepository.findById(idCandidacy).get();
+        for(Appointment appointment:appointments){
+            if(appointment.getCandidacy().equals(candidacy)){
+                appointmentRepository.delete(appointment);
+            }
+        }
 
-        this.candidacyRepository.deleteById(idCandidacy);
+        this.candidacyRepository.delete(candidacy);
         System.err.println("Candidacy deleted");
     }
 
@@ -53,6 +70,7 @@ public class CandidateCandidacyService implements ICandidateCandidacyService{
         List<Candidacy> candidacyList=this.candidacyRepository.findAll();
         List<Candidacy> candidacies=new ArrayList<Candidacy>();
         User user= this.userRepository.findById(idCandidate).get();
+        System.err.println(user.getCin());
         for(Candidacy c : candidacyList){
             if(c.getCandidate().equals(user) && user.getTypeUser().equals(TypeUser.Candidate))            {
                 candidacies.add(c);

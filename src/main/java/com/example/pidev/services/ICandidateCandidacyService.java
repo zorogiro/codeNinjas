@@ -11,7 +11,7 @@ import java.util.Map;
 @Service
 public interface ICandidateCandidacyService {
 
-    Candidacy addCandidacy(int idCandidate,int idOffer,Candidacy candidacy);
+    Candidacy addCandidacy(int idCandidate,int idOffer);
     void deleteCandidacy(int idCandidacy);
     List<Candidacy> findCandidacyByidCandidate(int idCandidate);
      StatCandidacy statCandidacyByIdCandidate(int idCandidacy);

@@ -11,5 +11,5 @@ public interface IRecuiterAppointmentService {
     Appointment addAppoitment(Appointment appointment,int idCandidacy,int idRecuiter);
     boolean deleteAppointment(int idAppointment);
     Appointment updateAppointmentDate(int idAppointment, Date newDate);
-    List<Appointment> getAppointmentsWithCloseDate(Date date);
+    List<Appointment> getAppointmentsWithCloseDate(int idRecuiter);
 }

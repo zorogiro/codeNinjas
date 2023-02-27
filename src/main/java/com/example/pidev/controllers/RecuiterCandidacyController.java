@@ -23,10 +23,8 @@ public class RecuiterCandidacyController {
     @PostMapping("/makeCandidacyAcepted/{idcandidacy}")
     @Transactional
     public Candidacy makeCandidacyAcepted(@PathVariable("idcandidacy") int idcandidacy){
-        Candidacy candidacy=this.recuiterCandidacyService.makeCandidacyAccepted(idcandidacy);
-        if( candidacy!=null)
-            return new Candidacy();
-        return candidacy;
+        return this.recuiterCandidacyService.makeCandidacyAccepted(idcandidacy);
+
     }
     @PostMapping("/makeCandidacyRefused/{idcandidacy}")
     @Transactional

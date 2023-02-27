@@ -29,9 +29,8 @@ public class CandidateCandidacyController {
     @Transactional
     @PostMapping("/addCandidacy/{idCandidate}/{idOffer}")
     public Candidacy addCandidacy(@PathVariable("idCandidate") int idCandidate,
-                                  @PathVariable("idOffer") int idOffer,
-                                  @RequestBody Candidacy candidacy) {
-        return this.candidateCandidacyService.addCandidacy(idCandidate, idOffer, candidacy);
+                                  @PathVariable("idOffer") int idOffer) {
+        return this.candidateCandidacyService.addCandidacy(idCandidate, idOffer);
     }
 
     @Transactional
@@ -41,9 +40,8 @@ public class CandidateCandidacyController {
     }
 
     @Transactional
-    @GetMapping("/getCandidacyById/{idCandidate}/{cin}")
-    public List<Candidacy> getCandidacyById(@PathVariable("idCandidate") int idCandidate,
-                                            @PathVariable("cin") int cin) {
+    @GetMapping("/getCandidacyById/{idCandidate}")
+    public List<Candidacy> getCandidacyById(@PathVariable("idCandidate") int idCandidate) {
         return this.candidateCandidacyService.findCandidacyByidCandidate(idCandidate);
     }
 

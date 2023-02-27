@@ -11,7 +11,10 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +31,7 @@ public class RecuiterAppointmentService implements IRecuiterAppointmentService{
     public Appointment addAppoitment(Appointment appointment,int idCandidacy,int idRecuiter) {
         Candidacy candidacy=candidacyRepository.findById(idCandidacy).get();
         User user=userRepository.findById(idRecuiter).get();
-        if(candidacy.getTypeCandidacy().equals(TypeCandidacy.Accepted)){
+        if(candidacy.getTypeCandidacy().equals(TypeCandidacy.Processing)){
             appointment.setCandidacy(candidacy);
             appointment.setRecruiter(user);
             return appointmentRepository.save(appointment);
@@ -61,13 +64,21 @@ public class RecuiterAppointmentService implements IRecuiterAppointmentService{
     }
 
     @Override
-    public List<Appointment> getAppointmentsWithCloseDate(Date date) {
-
+    public List<Appointment> getAppointmentsWithCloseDate(int idRecuiter)
+    {
+        User user=userRepository.findById(idRecuiter).get();
         List<Appointment> appointments=appointmentRepository.findAll();
         List<Appointment>appointments1=new ArrayList<>();
-       // Date date1=Date.parse( LocalDate.now().toString());
+        //DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        Timestamp timestamp = Timestamp.valueOf(now);
+        Date  date1= new Date(timestamp.getTime());
+        //System.out.println(dtf.format(now));
         for(Appointment appointment:appointments){
-           // if(appointment.getDateAppointment().getDay()+5>)
+            if((appointment.getDateAppointment().getDay()+5>=date1.getDay())&&
+                    (appointment.getRecruiter().equals(user))){
+                appointments1.add(appointment);
+            }
         }
         return appointments1;
     }

@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 //import javax.mail.Session;
 
 import org.joda.time.LocalDate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 
@@ -44,38 +45,11 @@ public class RecuiterCandidacyService  implements IRecuiterCandidacyService{
         {
             Offer offer=offerRepository.findById(candidacy.getOffer().getIdOffer()).get();
             int nbr=offer.getNbrPlaceDisponible();
-            nbr=nbr-1;
+            nbr--;
             offer.setNbrPlaceDisponible(nbr);
-            Offer offer1=offerRepository.save(offer);
-            Appointment appointment=new Appointment();
-
+            offerRepository.save(offer);
             candidacy.setTypeCandidacy(TypeCandidacy.Accepted);
-            /*try {
-                System.out.println("////////////////////////");
-                this.sendEmail("houssem.hassani@esprit.tn","hahah");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }*/
-            Candidacy candidacy1= this.candidacyRepository.save(candidacy);
-            Date date=new LocalDate().toDate();
-            List<Appointment> appointments=appointmentRepository.findAll();
-            boolean exist=false;
-            for(Appointment appointment1:appointments){
-                if(appointment1.getCandidacy().getIdCandidacy()==candidacy1.getIdCandidacy()){
-                    exist=true;
-                    break;
-                }
-            }
-            if(!exist){
-                appointment.setCandidacy(candidacy1);
-                appointment.setDateAppointment(date);
-                appointment.setRecruiter(offer1.getRecruiter());
-
-                appointment.setLinkMeet(null);
-                appointmentRepository.save(appointment);
-            }
-            //candidacy1.setAppointment(appointment1);
-            return candidacy1;
+             return this.candidacyRepository.save(candidacy);
         }
 
 
@@ -225,4 +199,33 @@ public class RecuiterCandidacyService  implements IRecuiterCandidacyService{
         }
             return statistiquesOffers;
     }
+    @Scheduled(cron = "0 0 16 1 * ?")
+    public void deleteCandidacyHavingOfferDateExpirationOver(){
+        List<Candidacy> candidacies=candidacyRepository.findAll();
+        Date date= java.sql.Date.valueOf(new LocalDate().toString());
+        for(Candidacy candidacy:candidacies){
+            if((candidacy.getOffer().getDateExpiration().before(date))&& !candidacy.getTypeCandidacy().equals(TypeCandidacy.Accepted)){
+                candidacyRepository.delete(candidacy);
+                System.err.println("candidacy over deleted");
+            }
+        }
+    }
+    @Scheduled(cron = "0 0 16 2 * ?")
+    public void deleteCandidacyHavingOfferDateExpirationOverAndIsAcceptedOrProcessing(){
+        List<Candidacy> candidacies=candidacyRepository.findAll();
+        Date date= java.sql.Date.valueOf(new LocalDate().toString());
+        System.err.println(date.toString());
+        System.err.println(date.getDay()+"*******");
+
+        for(Candidacy candidacy:candidacies){
+            System.err.println(candidacy.getOffer().getDateExpiration().getDay());
+            if((candidacy.getOffer().getDateExpiration().after(date))&& (candidacy.getTypeCandidacy().equals(TypeCandidacy.Accepted) ||
+                    candidacy.getTypeCandidacy().equals(TypeCandidacy.Processing))){
+                candidacyRepository.delete(candidacy);
+                System.err.println("candidacy for candidate CIN : "+candidacy.getCandidate().getCin()+" \n have a type :"+candidacy.getTypeCandidacy()+
+                        " \n and over date is deleted ");
+            }
+        }
+    }
+
 }
