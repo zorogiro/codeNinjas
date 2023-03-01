@@ -8,6 +8,8 @@ import com.example.pidev.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,8 @@ public class OfferService implements IOffer {
 
     @Autowired
     CandidateRepo candidateRepo;
-
+    @Autowired
+    CsvService csvReaderService;
     @Override
     public Offer addOffer(Offer o, Integer iduniversitie) {
         //public Offer addOffer(Offer o ) {
@@ -97,6 +100,74 @@ public class OfferService implements IOffer {
         }
 
         return validOffers;
+    }
+
+    public double calculateScore(OfferType offerType) throws IOException {
+
+
+        File filePath = new File("C:\\Users\\khawl\\codeNinjas\\codeNinjas\\src\\main\\resources\\notePI.csv");
+
+        List<CsvRow> csvRows = csvReaderService.readCsvFile(filePath, offerType);
+
+        double score = 0;
+        switch (offerType) {
+            case sae:
+                // TODO: add score formula for software engineering offers
+
+                for (CsvRow row : csvRows) {
+
+                    score = row.getMoy3() * 2 + row.getMoy4() * 2 + row.getGl() * 3 + row.getSpring() * 3 + row.getFr() * 1 + row.getAng() * 2;
+
+                }
+
+                break;
+            case ds:
+                // TODO: add score formula for data science offers
+                for (CsvRow row : csvRows) {
+
+                     score = row.getMoy3() * 2 + row.getMoy4() * 2 + row.getAdf() * 3 + row.getMath() * 3 + row.getFr() * 1 + row.getAng() * 2;
+
+                }
+                break;
+            case bi:
+                // TODO: add score formula for business intelligence offers
+                for (CsvRow row : csvRows) {
+
+                    score = row.getMoy3() * 2 + row.getMoy4() * 2 + row.getAdf() * 3 + row.getSpring() * 3 + row.getFr() * 1 + row.getAng() * 2;
+
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid offer type: " + offerType);
+        }
+
+        return score;
+    }
+    public String compareScores(double calculatedScore,Integer idoffer) {
+        Offer offers = offerRepo.findById(idoffer).orElse(null);
+        double offerScore = offers.getScoreOffer();
+        if (calculatedScore > offerScore) {
+            return "Congratulations! You scored higher than the offer score.";
+        } else if (calculatedScore == offerScore) {
+            return "You scored the same as the offer score.";
+        } else {
+            return "Sorry, your score is lower than the offer score.";
+        }
+    }
+    public String hideAvailablePlaces(Integer idoffer, List<Candidacy> candidates) {
+        int acceptedCandidates = 0;
+        Offer offers = offerRepo.findById(idoffer).orElse(null);
+        int offernbrplacedispo = offers.getNbrPlaceDisponible();
+        for (Candidacy candidate : candidates) {
+            if (candidate.getTypeCandidacy() == TypeCandidacy.Accepted) {
+                acceptedCandidates++;
+            }
+        }
+        int remainingPlaces = offernbrplacedispo - acceptedCandidates;
+        if (remainingPlaces < 0) {
+            remainingPlaces = 0;
+        }
+        return "There are " + remainingPlaces + " places available.";
     }
 
 }

@@ -17,4 +17,5 @@ import java.util.Optional;
 public interface OfferRepo extends JpaRepository<Offer, Integer> {
     Map<TypeOffer, Integer> countAllByTypeOffer(TypeOffer typeOffer);
     Optional<Offer> findByIdOfferAndCandidaciesContaining(int ifOffer,User student);
+    //double find
 }
