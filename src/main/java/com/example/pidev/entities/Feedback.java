@@ -11,6 +11,7 @@ import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 @Getter
 @Setter
@@ -40,5 +41,8 @@ public class Feedback  implements Serializable {
     private Date dateCreation;
     private int rating;
     private String priority;
+    private String status;
+
+
 
 }

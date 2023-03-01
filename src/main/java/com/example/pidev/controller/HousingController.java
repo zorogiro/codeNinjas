@@ -31,8 +31,29 @@ public class HousingController {
 
         return housingService.allhousing();
     }
+    @GetMapping("/byPrice/{price}")
+    public List<Housing> getHebergementsByPrix(@PathVariable double price) {
 
+        return housingService.getHebergementsByPrix(price);
+    }
 
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

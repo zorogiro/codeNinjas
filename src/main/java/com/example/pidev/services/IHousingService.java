@@ -3,6 +3,7 @@ package com.example.pidev.services;
 
 import com.example.pidev.entities.Housing;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -15,7 +16,11 @@ public interface IHousingService {
 
     List<Housing> allhousing();
 
-    List<Housing> rechercherParPrix(double price);
+
+
+
+    public List<Housing> getHebergementsByPrix(double price);
+
 
 
 

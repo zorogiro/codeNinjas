@@ -41,15 +41,22 @@ public class candidatFeedbackService implements IcandidatFeedback{
         Offer offer= this.offerRepositroy.getReferenceById(idoffer);
         f.setOffer(offer);
         f.setDateCreation(new Date());
-
-
+        f.setStatus("en attente");
 
         return this.feedbackRepository.save(f);
     }
 
     @Override
     public Feedback updatecandidatFeedback(Feedback f) {
-        return null;
+
+         f.setStatus("traité");
+        return this.feedbackRepository.save(f);
+    }
+
+    @Override
+    public Feedback updatecandidatFeedbackk(Feedback f) {
+        f.setStatus("non traité");
+        return this.feedbackRepository.save(f);
     }
 
     @Override
@@ -58,6 +65,7 @@ public class candidatFeedbackService implements IcandidatFeedback{
         System.err.println(feedback.getSubject());
         feedback.setUser(null);
         Feedback ff=this.feedbackRepository.save(feedback);
+
         this.feedbackRepository.delete(ff);
     }
 

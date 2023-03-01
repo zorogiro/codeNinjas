@@ -12,6 +12,7 @@ public interface IcandidatFeedback {
     Feedback addcandidatFeedback (Feedback f ,int idoffer,int idu,int cin);
 
     Feedback updatecandidatFeedback (Feedback f);
+    Feedback updatecandidatFeedbackk (Feedback f);
 
     void removecandidatFeedback(int  idFeedback);
 

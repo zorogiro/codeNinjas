@@ -11,6 +11,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -39,11 +41,20 @@ UserRepository userRepository;
         f.setUser(user);
         Candidacy candidacy=this.condidacyRepository.getReferenceById(idcondidacy);
         f.setCandidacy(candidacy);
+        f.setStatus("en attente");
         return this.feedbackRepository.save(f);
     }
 
     @Override
-    public Feedback updateFeedback(Feedback f) {
+    public Feedback updateFeedbackrecruiter(Feedback f) {
+
+       // f.setStatus("traité");
+        return this.feedbackRepository.save(f);
+    }
+
+    @Override
+    public Feedback updateFeedbackrecruiterr(Feedback f) {
+       // f.setStatus("non traité");
         return this.feedbackRepository.save(f);
     }
 
@@ -54,10 +65,14 @@ UserRepository userRepository;
     }
 
 
+
+
+
     public void processFeedbacksByPriority() {
         List<Feedback> feedbacks = feedbackRepository.findAllByOrderByPriorityDesc();
         for (Feedback feedback : feedbacks) {
             // traiter le feedback en fonction de sa priorité
+            System.err.println(feedback.getSubject());
         }
     }
 
@@ -67,20 +82,26 @@ UserRepository userRepository;
         @Autowired
         private recruiterFeedbackService recruiterFeedbackService;
 
-        @Scheduled(fixedDelay = 60000) // exécuter la méthode toutes les minutes
+        @Scheduled(fixedDelay = 30000) // exécuter la méthode toutes les minutes
         public void processFeedbacksByPriority() {
             recruiterFeedbackService.processFeedbacksByPriority();
         }
     }
 
 
+    @Override
+    public List<Feedback> getReclamationsByMonth(int month) {
 
-
-
-
-
-
+        return feedbackRepository.findByMonth(month);
     }
+
+
+
+
+}
+
+
+
 
 
 

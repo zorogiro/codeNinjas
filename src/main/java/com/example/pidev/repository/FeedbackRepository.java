@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -20,6 +23,14 @@ public interface FeedbackRepository extends JpaRepository<Feedback,Integer> {
 
 
     List<Feedback> findAllByOrderByPriorityDesc();
+
+    @Query("SELECT r FROM Feedback r WHERE MONTH(r.dateCreation) = :month")
+    List<Feedback> findByMonth(@Param("month") int month);
+
+
+
+
+
 
 
 

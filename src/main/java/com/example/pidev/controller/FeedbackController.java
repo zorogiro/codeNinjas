@@ -9,12 +9,15 @@ import com.example.pidev.services.IrecruiterFeedbackService;
 import com.example.pidev.services.candidatFeedbackService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,31 +34,42 @@ public class FeedbackController {
     @PostMapping("addfeedbackCandidacy/{iduser}/{cin}/{idcandidacy}")
     public Feedback addFeedback(@RequestBody Feedback feedback,
 
-                                                @PathVariable("iduser") int iduser,
-                                                @PathVariable("cin") int cin,
+                                @PathVariable("iduser") int iduser,
+                                @PathVariable("cin") int cin,
 
-                                                @PathVariable("idcandidacy") int idcandidacy
-                                                ) {
+                                @PathVariable("idcandidacy") int idcandidacy
+    ) {
 
 
-        return iFeedbackService.addFeedback(feedback,iduser,cin,idcandidacy);
+        return iFeedbackService.addFeedback(feedback, iduser, cin, idcandidacy);
 
     }
 
 
-
-    @PutMapping("/updatefeedback/{idfeedback}")
+    @GetMapping("/updatefeedback/{idfeedback}")
     public Feedback updatefeedback(@RequestBody Feedback feedback) {
-        return iFeedbackService.updateFeedback(feedback);
+
+        feedback.setStatus("traité");
+
+        return iFeedbackService.updateFeedbackrecruiter(feedback);
 
     }
+
+    @GetMapping("/updatefeedback2/{idfeedback}")
+    public Feedback updatefeedback2(@RequestBody Feedback feedback) {
+
+        feedback.setStatus("non traité");
+        return iFeedbackService.updateFeedbackrecruiterr(feedback);
+
+    }
+
 
     @Transactional
     @DeleteMapping("/removefeedback/{idfeedback}")
     public void removefeedback(@PathVariable("idfeedback") int idfeedback) {
 
 
-         icandidatFeedback.removecandidatFeedback(idfeedback);
+        icandidatFeedback.removecandidatFeedback(idfeedback);
 
     }
 
@@ -63,15 +77,32 @@ public class FeedbackController {
     @PostMapping("addcandidateFeedback/{idoffer}/{iduser}/{cin}")
     public Feedback addcandidatFeedback(@RequestBody Feedback feedback,
 
-                                @PathVariable("idoffer") int idoffer,
-                                @PathVariable("cin") int cin,
+                                        @PathVariable("idoffer") int idoffer,
+                                        @PathVariable("cin") int cin,
                                         @PathVariable("iduser") int iduser
     ) {
 
 
-        return icandidatFeedback.addcandidatFeedback(feedback,idoffer,iduser,cin);
+        return icandidatFeedback.addcandidatFeedback(feedback, idoffer, iduser, cin);
 
     }
+
+
+    @GetMapping("/updatefeedbackcandidat/{idfeedback}")
+    public Feedback updatecandidatFeedback(@RequestBody Feedback feedback) {
+
+        feedback.setStatus("traité");
+        return icandidatFeedback.updatecandidatFeedback(feedback);
+
+    }
+
+    @GetMapping("/updatefeedbackcandidat2/{idfeedback}")
+    public Feedback updatecandidatFeedbackk(@RequestBody Feedback feedback) {
+
+        feedback.setStatus("non traité");
+        return icandidatFeedback.updatecandidatFeedbackk(feedback);
+    }
+
 
     @Transactional
     @GetMapping("/affichage")
@@ -84,7 +115,7 @@ public class FeedbackController {
     @Transactional
     @GetMapping("/affichagereclamation")
     public double calculerMoyenneReclamationsParUtilisateur() {
-         return icandidatFeedback.calculerMoyenneReclamationsParUtilisateur();
+        return icandidatFeedback.calculerMoyenneReclamationsParUtilisateur();
     }
 
 
@@ -100,11 +131,10 @@ public class FeedbackController {
                 .collect(Collectors.toList());
     }
 
-    public static class FeedbackStats  {
+    public static class FeedbackStats {
         public Date date;
         public long count;
         public double average;
-
 
 
         public FeedbackStats(Date date, long count, double average) {
@@ -112,6 +142,27 @@ public class FeedbackController {
             this.count = count;
             this.average = average;
 
-        }}
+
+        }
+    }
+
+
+    @GetMapping("/historique")
+    public List<Feedback> getHistoriqueReclamationsParMois(@RequestParam int mois) {
+
+        return iFeedbackService.getReclamationsByMonth(mois);
+    }
+
+
+
 
 }
+
+
+
+
+
+
+
+
+

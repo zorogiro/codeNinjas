@@ -29,18 +29,10 @@ public class HousingService implements IHousingService {
     }
 
     @Override
-    public List<Housing> rechercherParPrix(double price) {
-        List<Housing> hebergements = housingRepository.findAll();
-        List<Housing> hebergementsTrouves = new ArrayList<>();
+    public List<Housing> getHebergementsByPrix(double price) {
 
-        for (Housing hebergement : hebergements) {
-            if (hebergement.getPrice() <= price) {
-                hebergementsTrouves.add(hebergement);
-            }
-        }
-        return hebergementsTrouves; //
+        return housingRepository.findByPrixLessThan(price);
     }
-
 
 
 }
