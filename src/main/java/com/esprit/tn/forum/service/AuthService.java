@@ -1,17 +1,28 @@
 package com.esprit.tn.forum.service;
 
 import com.esprit.tn.forum.dto.AuthenticationResponse;
+<<<<<<< Updated upstream
 import com.esprit.tn.forum.dto.LoginRequest;
 import com.esprit.tn.forum.dto.RefreshTokenRequest;
 import com.esprit.tn.forum.dto.RegisterRequest;
 import com.esprit.tn.forum.exceptions.BannedUserException;
 import com.esprit.tn.forum.exceptions.ForumException;
+=======
+import com.esprit.tn.forum.exceptions.ForumException;
+import com.esprit.tn.forum.security.JwtProvider;
+import com.esprit.tn.forum.dto.LoginRequest;
+import com.esprit.tn.forum.dto.RefreshTokenRequest;
+import com.esprit.tn.forum.dto.RegisterRequest;
+>>>>>>> Stashed changes
 import com.esprit.tn.forum.model.NotificationEmail;
 import com.esprit.tn.forum.model.User;
 import com.esprit.tn.forum.model.VerificationToken;
 import com.esprit.tn.forum.repository.UserRepository;
 import com.esprit.tn.forum.repository.VerificationTokenRepository;
+<<<<<<< Updated upstream
 import com.esprit.tn.forum.security.JwtProvider;
+=======
+>>>>>>> Stashed changes
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;

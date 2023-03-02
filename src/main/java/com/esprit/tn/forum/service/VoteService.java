@@ -1,9 +1,15 @@
 package com.esprit.tn.forum.service;
 
 import com.esprit.tn.forum.dto.VoteDto;
+<<<<<<< Updated upstream
 import com.esprit.tn.forum.model.Post;
 import com.esprit.tn.forum.exceptions.PostNotFoundException;
 import com.esprit.tn.forum.exceptions.ForumException;
+=======
+import com.esprit.tn.forum.exceptions.ForumException;
+import com.esprit.tn.forum.exceptions.PostNotFoundException;
+import com.esprit.tn.forum.model.Post;
+>>>>>>> Stashed changes
 import com.esprit.tn.forum.model.Vote;
 import com.esprit.tn.forum.repository.PostRepository;
 import com.esprit.tn.forum.repository.VoteRepository;

@@ -1,14 +1,21 @@
 package com.esprit.tn.forum.mapper;
 
+<<<<<<< Updated upstream
 import com.esprit.tn.forum.model.*;
 
 import com.esprit.tn.forum.dto.PostRequest;
 import com.esprit.tn.forum.dto.PostResponse;
+=======
+import com.esprit.tn.forum.dto.PostRequest;
+import com.esprit.tn.forum.dto.PostResponse;
+import com.esprit.tn.forum.model.*;
+>>>>>>> Stashed changes
 import com.esprit.tn.forum.repository.CommentRepository;
 import com.esprit.tn.forum.repository.VoteRepository;
 import com.esprit.tn.forum.service.AuthService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.ocpsoft.prettytime.PrettyTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
@@ -27,7 +34,11 @@ public abstract class PostMapper {
     private AuthService authService;
 
 
+<<<<<<< Updated upstream
     @Mapping(target = "createdDate", expression = "java(java.time.LocalDateTime.now())")
+=======
+    @Mapping(target = "createdDate", expression = "java(java.time.Instant.now())")
+>>>>>>> Stashed changes
     @Mapping(target = "description", source = "postRequest.description")
     @Mapping(target = "topic", source = "topic")
     @Mapping(target = "voteCount", constant = "0")
@@ -47,9 +58,19 @@ public abstract class PostMapper {
         return commentRepository.findByPost(post).size();
     }
 
+<<<<<<< Updated upstream
 // String getDuration(Post post) {
 //        return TimeAgo.using(post.getCreatedDate().to);
 //    }
+=======
+    private final PrettyTime prettyTime = new PrettyTime();
+
+    // ...
+
+    public String getDuration(Post post) {
+        return prettyTime.format(post.getCreatedDate());
+    }
+>>>>>>> Stashed changes
 
     boolean isPostUpVoted(Post post) {
         return checkVoteType(post, UPVOTE);

@@ -6,7 +6,11 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+<<<<<<< Updated upstream
 import java.time.LocalDateTime;
+=======
+import java.time.Instant;
+>>>>>>> Stashed changes
 
 
 @Entity
@@ -24,6 +28,7 @@ public class Notification {
     private String message;
 
     @ManyToOne(fetch = FetchType.LAZY)
+<<<<<<< Updated upstream
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -31,5 +36,15 @@ public class Notification {
 
     @Column(name = "created_date")
     private LocalDateTime createdDate;
+=======
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @NotNull
+    private boolean vu;
+
+    @Column(name = "created_date")
+    private Instant createdDate;
+>>>>>>> Stashed changes
 
 }

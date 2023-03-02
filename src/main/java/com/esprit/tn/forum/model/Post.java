@@ -8,8 +8,14 @@ import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+<<<<<<< Updated upstream
 import java.time.LocalDateTime;
 import java.util.Date;
+=======
+import java.time.Instant;
+import java.util.Date;
+import java.util.List;
+>>>>>>> Stashed changes
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -39,6 +45,13 @@ public class Post {
     @JoinColumn(name = "id", referencedColumnName = "id")
     private Topic topic;
     private boolean deleted;
+<<<<<<< Updated upstream
     private Date deletedTime;
 
+=======
+    @Nullable
+    private Date deletedTime;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Comment> comments;
+>>>>>>> Stashed changes
 }

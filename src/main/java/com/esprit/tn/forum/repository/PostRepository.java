@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByTopic(Topic topic);
+<<<<<<< Updated upstream
 
     List<Post> findByUser(User user);
 
@@ -19,4 +20,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByDeletedTrue();
 
     int countByUser(User user);
+=======
+    List<Post> findByUser(User user);
+    int countByUser(User user);
+
+    List<Post> findAllByDeletedTrue();
+>>>>>>> Stashed changes
 }

@@ -1,8 +1,14 @@
 package com.esprit.tn.forum.mapper;
 
+<<<<<<< Updated upstream
 import com.esprit.tn.forum.model.Post;
 import com.esprit.tn.forum.model.Topic;
 import com.esprit.tn.forum.dto.TopicDto;
+=======
+import com.esprit.tn.forum.dto.TopicDto;
+import com.esprit.tn.forum.model.Post;
+import com.esprit.tn.forum.model.Topic;
+>>>>>>> Stashed changes
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
