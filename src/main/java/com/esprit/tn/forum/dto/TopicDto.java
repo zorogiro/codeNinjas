@@ -5,11 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-<<<<<<< Updated upstream
-import java.time.Instant;
-
-=======
->>>>>>> Stashed changes
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

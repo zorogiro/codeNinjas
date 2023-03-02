@@ -1,14 +1,8 @@
 package com.esprit.tn.forum.mapper;
 
-<<<<<<< Updated upstream
-import com.esprit.tn.forum.model.Post;
-import com.esprit.tn.forum.dto.CommentsDto;
-import com.esprit.tn.forum.model.Comment;
-=======
 import com.esprit.tn.forum.dto.CommentsDto;
 import com.esprit.tn.forum.model.Comment;
 import com.esprit.tn.forum.model.Post;
->>>>>>> Stashed changes
 import com.esprit.tn.forum.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

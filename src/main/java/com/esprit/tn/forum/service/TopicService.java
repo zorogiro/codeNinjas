@@ -1,24 +1,16 @@
 package com.esprit.tn.forum.service;
 
-<<<<<<< Updated upstream
-import com.esprit.tn.forum.mapper.TopicMapper;
-import com.esprit.tn.forum.model.Topic;
-import com.esprit.tn.forum.dto.TopicDto;
-import com.esprit.tn.forum.exceptions.ForumException;
-=======
 import com.esprit.tn.forum.dto.TopicDto;
 
 import com.esprit.tn.forum.exceptions.ForumException;
 import com.esprit.tn.forum.mapper.TopicMapper;
 import com.esprit.tn.forum.model.Topic;
->>>>>>> Stashed changes
 import com.esprit.tn.forum.repository.TopicRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;

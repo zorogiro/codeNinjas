@@ -6,36 +6,22 @@ import com.esprit.tn.forum.exceptions.PostNotFoundException;
 import com.esprit.tn.forum.exceptions.TopicNotFoundException;
 import com.esprit.tn.forum.mapper.PostMapper;
 import com.esprit.tn.forum.model.*;
-<<<<<<< Updated upstream
-=======
 import com.esprit.tn.forum.repository.ArchiveRepository;
->>>>>>> Stashed changes
 import com.esprit.tn.forum.repository.PostRepository;
 import com.esprit.tn.forum.repository.TopicRepository;
 import com.esprit.tn.forum.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
-<<<<<<< Updated upstream
-=======
 import org.springframework.security.access.AccessDeniedException;
->>>>>>> Stashed changes
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-<<<<<<< Updated upstream
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-=======
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
->>>>>>> Stashed changes
 
 import static java.util.stream.Collectors.toList;
 
@@ -49,66 +35,6 @@ public class PostService {
     private final TopicRepository topicRepository;
     private final UserRepository userRepository;
     private final AuthService authService;
-<<<<<<< Updated upstream
-
-    private final MailService mailService;
-    private final NotificationService notificationService;
-    private final PostMapper postMapper;
-
-    @Scheduled(cron = "0 0 0 * * ?") // every day at 00:00
-    public void deleteOldDeletedPostsDaily() {
-        deleteOldDeletedPosts();
-    }
-
-    public void save(PostRequest postRequest) {
-        // Map the PostRequest to a Post object
-        Topic topic = topicRepository.findByName(postRequest.getTopicName())
-                .orElseThrow(() -> new TopicNotFoundException(postRequest.getTopicName()));
-        User user = authService.getCurrentUser();
-        Post post = postMapper.map(postRequest, topic, user);
-
-        // Check if the post contains any bad words
-        filterPostWithBadWords(post);
-
-        // Check if the user claimed a new PostBadge
-        awardPostBadges(user);
-
-        // Save the post to the database
-        postRepository.save(post);
-    }
-
-
-    public void filterPostWithBadWords(Post post) {
-        // List of bad words to filter
-        List<String> badWords = Arrays.asList("aaa", "badword2", "badword3");
-
-        // Check if the comment contains any bad words
-        for (String word : badWords) {
-            if (post.getDescription().toLowerCase().contains(word)) {
-                // Increment the alert count for the user who made the comment
-                User user = post.getUser();
-                int alertCount = user.getAlertCount();
-                user.setAlertCount(alertCount + 1);
-                notificationService.sendNotification(user,"your alert count is now " + alertCount + "remember that you will be ban ished after the 3rd bad word ");
-
-
-                // If the user has been alerted three times, ban them for three days
-                if (alertCount >= 3) {
-                    user.setBannedUntil(LocalDateTime.now().plusDays(3));
-                    mailService.sendMail(new NotificationEmail("your account is now blocked for 3 days ",
-                            user.getEmail(), "Thank you for uderstanding, " +
-                            "please click on the below url to send an e3tiradh  : " +
-                            "http://localhost:8081/api/auth/e3tiradh/"));
-
-
-                }
-
-                // Remove the bad word from the comment
-                String content = post.getDescription().toLowerCase().replace(word, "***");
-                post.setDescription(content);
-            }
-        }
-=======
     private final PostMapper postMapper;
     private final MailService mailService;
 
@@ -121,7 +47,6 @@ public class PostService {
         filterPostWithBadWords(postRequest);
         awardPostBadges(user);
         postRepository.save(postMapper.map(postRequest, topic, user));
->>>>>>> Stashed changes
     }
 
     @Transactional(readOnly = true)
@@ -132,46 +57,11 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-<<<<<<< Updated upstream
-    public List<PostResponse> getAllVisiblePosts() {
-        List<PostResponse> list = postRepository.findAllByDeleted(false)
-                .stream()
-                .map(postMapper::mapToDto)
-                .sorted(Comparator.comparingInt(PostResponse::getVoteCount).reversed())
-                .collect(Collectors.toList());
-        return list;
-    }
-
-    @Transactional(readOnly = true)
-    public List<PostResponse> getAllUnvisiblePosts() {
-        return postRepository.findAllByDeleted(true)
-                .stream()
-                .map(postMapper::mapToDto)
-                .collect(toList());
-
-    }
-
-    public void deletePostAfter3Days(Post post) {
-        long currentTimeMillis = System.currentTimeMillis();
-        long deleteTimeMillis = post.getDeletedTime().getTime();
-        long threeDaysInMillis = 3 * 24 * 60 * 60 * 1000;
-        if (post.isDeleted() && (currentTimeMillis - deleteTimeMillis) > threeDaysInMillis) {
-            postRepository.delete(post);
-        }
-    }
-
-    public void deleteOldDeletedPosts() {
-        List<Post> deletedPosts = postRepository.findAllByDeletedTrue();
-        for (Post post : deletedPosts) {
-            deletePostAfter3Days(post);
-        }
-=======
     public List<PostResponse> getAllPosts() {
         return postRepository.findAll()
                 .stream()
                 .map(postMapper::mapToDto)
                 .collect(toList());
->>>>>>> Stashed changes
     }
 
     @Transactional(readOnly = true)
@@ -192,8 +82,6 @@ public class PostService {
                 .collect(toList());
     }
 
-<<<<<<< Updated upstream
-=======
     public void filterPostWithBadWords(PostRequest postRequest) {
         // List of bad words to filter
         List<String> badWords = Arrays.asList("aaa", "badword2", "badword3");
@@ -241,7 +129,6 @@ public class PostService {
     public void deleteOldDeletedPostsDaily() {
         deleteOldDeletedPosts();
     }
->>>>>>> Stashed changes
     @Transactional(readOnly = true)
     public boolean deletePost(Long postId) {
         // Get the current user from the authentication service
@@ -257,11 +144,7 @@ public class PostService {
             postRepository.save(postToDelete);
             return true;
         } else if (currentUser.isAdmin(currentUser)) {
-<<<<<<< Updated upstream
-            postRepository.delete(postRepository.findById(postId).get());
-=======
             archivePost(postRepository.findById(postId).get().getPostId());
->>>>>>> Stashed changes
         }
 
         // User is not authorized to delete the post
@@ -269,21 +152,6 @@ public class PostService {
     }
 
     public void awardPostBadges(User user) {
-<<<<<<< Updated upstream
-            int postCount = postRepository.countByUser(user);
-            if (postCount > 10) {
-                user.setPostBadge(BadgeType.GOLD);
-            } else if (postCount > 5) {
-                user.setPostBadge(BadgeType.SILVER);
-            } else if (postCount > 0) {
-                user.setPostBadge(BadgeType.BRONZE);
-            }
-            userRepository.save(user);
-        }
-    }
-
-
-=======
         int postCount = postRepository.countByUser(user);
         if (postCount > 10) {
             user.setPostBadge(BadgeType.GOLD);
@@ -316,5 +184,4 @@ public class PostService {
     }
 
 }
->>>>>>> Stashed changes
 

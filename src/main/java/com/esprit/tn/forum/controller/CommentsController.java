@@ -1,10 +1,7 @@
 package com.esprit.tn.forum.controller;
 
 import com.esprit.tn.forum.dto.CommentsDto;
-<<<<<<< Updated upstream
-=======
 import com.esprit.tn.forum.model.Comment;
->>>>>>> Stashed changes
 import com.esprit.tn.forum.service.CommentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,11 +31,7 @@ public class CommentsController {
     }
 
     @GetMapping("/by-user/{userName}")
-<<<<<<< Updated upstream
-    public ResponseEntity<List<CommentsDto>> getAllCommentsForUser(@PathVariable String userName) {
-=======
     public ResponseEntity<List<CommentsDto>> getAllCommentsForUser(@PathVariable String userName){
->>>>>>> Stashed changes
         return ResponseEntity.status(OK)
                 .body(commentService.getAllCommentsForUser(userName));
     }

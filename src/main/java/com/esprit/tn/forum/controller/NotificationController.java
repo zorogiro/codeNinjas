@@ -1,10 +1,6 @@
 package com.esprit.tn.forum.controller;
 
 
-<<<<<<< Updated upstream
-import com.esprit.tn.forum.dto.NotificationDto;
-=======
->>>>>>> Stashed changes
 import com.esprit.tn.forum.model.Notification;
 import com.esprit.tn.forum.service.AuthService;
 import com.esprit.tn.forum.service.NotificationService;
@@ -13,10 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
 @Data
 @RestController
 @RequestMapping("/api/notifications")
