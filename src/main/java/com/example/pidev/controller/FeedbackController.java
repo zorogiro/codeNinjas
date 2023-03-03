@@ -96,10 +96,13 @@ public class FeedbackController {
 
     }
 
-    @GetMapping("/updatefeedbackcandidat2/{idfeedback}")
+    @PutMapping("/updatefeedbackcandidat2/{idfeedback}")
     public Feedback updatecandidatFeedbackk(@RequestBody Feedback feedback) {
 
         feedback.setStatus("non traité");
+        feedback.setPriority("il faut le traite dans deux semaines ");
+        feedback.setDateLimite(new Date());
+
         return icandidatFeedback.updatecandidatFeedbackk(feedback);
     }
 
@@ -152,6 +155,26 @@ public class FeedbackController {
 
         return iFeedbackService.getReclamationsByMonth(mois);
     }
+
+    // Endpoint pour mettre à jour la date limite d'une réclamation
+
+    @GetMapping("/limitdate")
+    public List<Feedback> getReclamationsByDueDate() {
+        return iFeedbackService.getReclamationsByDueDate();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

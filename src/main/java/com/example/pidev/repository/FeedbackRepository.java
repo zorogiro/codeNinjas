@@ -21,11 +21,18 @@ public interface FeedbackRepository extends JpaRepository<Feedback,Integer> {
     @Query("SELECT DATE(dateCreation) as date, COUNT(dateCreation) as count, AVG(rating) as average FROM Feedback GROUP BY DATE(dateCreation)")
     List<Object[]> findFeedbackStatsByDate();
 
-
+   // @Query("SELECT count (cc.idFeedback) FROM Feedback cc WHERE cc.dateCreation =:dateCreation ")
     List<Feedback> findAllByOrderByPriorityDesc();
+
+    List<Feedback> findAllByOrderByDateLimiteAsc();
 
     @Query("SELECT r FROM Feedback r WHERE MONTH(r.dateCreation) = :month")
     List<Feedback> findByMonth(@Param("month") int month);
+
+
+
+
+
 
 
 

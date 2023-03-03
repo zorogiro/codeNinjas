@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
@@ -94,6 +95,14 @@ UserRepository userRepository;
 
         return feedbackRepository.findByMonth(month);
     }
+
+
+
+    // Méthode pour récupérer la liste des réclamations triées par date limite
+    public List<Feedback> getReclamationsByDueDate() {
+        return feedbackRepository.findAllByOrderByDateLimiteAsc();
+    }
+
 
 
 

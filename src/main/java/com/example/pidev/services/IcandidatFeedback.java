@@ -18,4 +18,7 @@ public interface IcandidatFeedback {
 
     double calculerMoyenneReclamationsParUtilisateur();
 
+    public List<Feedback> getReclamationsByDueDate();
+
+
 }

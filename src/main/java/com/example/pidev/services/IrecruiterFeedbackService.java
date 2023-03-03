@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 @Service
 public interface IrecruiterFeedbackService {
@@ -24,7 +25,15 @@ public interface IrecruiterFeedbackService {
     public List<Feedback> getReclamationsByMonth(int month);
 
 
-   // public List<Feedback> getReclamationsByYear(int annee);
+  //  public List<Feedback> getReclamationsByYear(int year);
+
+
+
+    public List<Feedback> getReclamationsByDueDate();
+
+
+
+
 
 
 

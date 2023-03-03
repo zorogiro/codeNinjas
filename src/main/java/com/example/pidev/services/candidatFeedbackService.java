@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Date;
 import java.util.List;
 
@@ -74,6 +75,10 @@ public class candidatFeedbackService implements IcandidatFeedback{
         return feedbackRepository.count();
     }
 
+    @Override
+    public List<Feedback> getReclamationsByDueDate() {
+        return feedbackRepository.findAllByOrderByDateLimiteAsc();
+    }
 
 
     public void processFeedbacksByPriority() {
@@ -95,10 +100,6 @@ public class candidatFeedbackService implements IcandidatFeedback{
             candidatFeedbackService.processFeedbacksByPriority();
         }
     }
-
-
-
-
 
 
 

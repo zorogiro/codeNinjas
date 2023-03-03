@@ -42,6 +42,7 @@ public class Feedback  implements Serializable {
     private int rating;
     private String priority;
     private String status;
+    private Date dateLimite;
 
 
 
