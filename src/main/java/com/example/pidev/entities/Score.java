@@ -1,5 +1,4 @@
 package com.example.pidev.entities;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +24,7 @@ public class Score {
     private float moyenneGenerale;
     private float scoreTotale;
     private boolean isAccepted;
-    private File file;
+    private File file=null;
     public Score() {}
 
 

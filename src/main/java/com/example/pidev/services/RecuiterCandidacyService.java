@@ -3,6 +3,7 @@ import com.example.pidev.entities.*;
 import com.example.pidev.repositories.AppointmentRepository;
 import com.example.pidev.repositories.CandidacyRepository;
 import com.example.pidev.repositories.OfferRepository;
+import com.example.pidev.repositories.UserRepository;
 import com.twilio.twiml.voice.Client;
 import lombok.AllArgsConstructor;
 //import javax.mail.Session;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 //import javax.mail.internet.InternetAddress;
 //import javax.mail.internet.MimeMessage;
 import java.awt.*;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 
@@ -26,6 +29,8 @@ import java.util.List;
 @AllArgsConstructor
 public class RecuiterCandidacyService  implements IRecuiterCandidacyService{
     CandidacyRepository candidacyRepository;
+    IEmailService iEmailService;
+    UserRepository userRepository;
     OfferRepository offerRepository;
     AppointmentRepository appointmentRepository;
     @Override
@@ -33,6 +38,14 @@ public class RecuiterCandidacyService  implements IRecuiterCandidacyService{
         Candidacy candidacy=this.candidacyRepository.getReferenceById(idcandidacy);
         if(candidacy != null) {
             candidacy.setTypeCandidacy(TypeCandidacy.Processing);
+            EmailDetails emailDetailsCandidate=new EmailDetails();
+            emailDetailsCandidate.setRecipient(candidacy.getCandidate().getEmail());
+            emailDetailsCandidate.setSubject("Candidacy");
+            emailDetailsCandidate.setMsgBody("Your Candidacy wich have date"+ candidacy.getDateCreation()+" have been changend for "+TypeCandidacy.Processing+
+                    "by the recruiter "+candidacy.getOffer().getRecruiter().getFirstName()+
+                    " "+candidacy.getOffer().getRecruiter().getLastName() +" his mail : "+
+                    candidacy.getOffer().getRecruiter().getEmail());
+            iEmailService.sendSimpleMail(emailDetailsCandidate);
             return this.candidacyRepository.save(candidacy);
         }
         return null;
@@ -47,7 +60,24 @@ public class RecuiterCandidacyService  implements IRecuiterCandidacyService{
             int nbr=offer.getNbrPlaceDisponible();
             nbr--;
             offer.setNbrPlaceDisponible(nbr);
-            offerRepository.save(offer);
+            Offer offer1=offerRepository.save(offer);
+            EmailDetails emailDetailsCandidate=new EmailDetails();
+            emailDetailsCandidate.setRecipient(candidacy.getCandidate().getEmail());
+            emailDetailsCandidate.setSubject("Candidacy");
+            emailDetailsCandidate.setMsgBody("Your Candidacy wich have date"+ candidacy.getDateCreation()+" have been acceted by"
+                    +candidacy.getOffer().getRecruiter().getFirstName()+
+                    " "+candidacy.getOffer().getRecruiter().getLastName() +" his mail : "+
+                    candidacy.getOffer().getRecruiter().getEmail());
+            iEmailService.sendSimpleMail(emailDetailsCandidate);
+            EmailDetails emailDetailsRecuiter=new EmailDetails();
+            emailDetailsRecuiter.setRecipient(candidacy.getOffer().getRecruiter().getEmail());
+            emailDetailsRecuiter.setSubject("Candidacy");
+            emailDetailsRecuiter.setMsgBody("You accepted Candidacy for "+ candidacy.getCandidate().getLastName()+
+                    candidacy.getCandidate().getFirstName()+
+                    " .\n So your offer have   "+offer1.getNbrPlaceDisponible()+"place disponible"+
+                    "you can send mail for your new candidate via : "+candidacy.getCandidate().getEmail());
+
+            iEmailService.sendSimpleMail(emailDetailsRecuiter);
             candidacy.setTypeCandidacy(TypeCandidacy.Accepted);
              return this.candidacyRepository.save(candidacy);
         }
@@ -57,74 +87,6 @@ public class RecuiterCandidacyService  implements IRecuiterCandidacyService{
         return  null;
     }
 
-    /*public void sendEmail(String to, String subject, String body) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setFrom("houssemhassanii@gmail.com");
-        message.setSubject(subject);
-        message.setText(body);
-
-        mailSender.send(message);
-    }
-    public void sendHtmlEmail() throws MessagingException {
-        MimeMessage message = mailSender.createMimeMessage();
-
-        message.setFrom(new InternetAddress("houssemhassanii@gmail.com"));
-        message.setRecipients(MimeMessage.RecipientType.TO, "houssem.hassani@esprit.tn");
-        message.setSubject("Test email from Spring");
-
-        String htmlContent = "<h1>This is a test Spring Boot email</h1>" +
-                "<p>It can contain <strong>HTML</strong> content.</p>";
-        message.setContent(htmlContent, "text/html; charset=utf-8");
-        System.err.println("4564654564");
-        mailSender.send(message);
-    }
-    public static void sendEmail(String recepient,String s) throws Exception
-    {
-        System.err.println("Prepare");
-        Properties properties=new Properties();
-        properties.put("mail.smtp.auth","true");
-        properties.put("mail.smtp.starttls.enable","true");
-        properties.put("mail.smtp.host","smtp.gmail.com");
-        properties.put("mail.smtp.port","587");
-        String myAccountEmail="e.citoyen.tunisie@gmail.com";
-        String password="E-citoyen2022";
-        javax.mail.Session session=javax.mail.Session.getInstance(properties,new Authenticator(){
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication()
-            {
-                return new PasswordAuthentication(myAccountEmail,password);
-
-            }
-        });
-        Message message = prepareMessage(session,myAccountEmail,recepient,s);
-        Transport.send(message);
-        System.err.println("envoyee avec succes");
-
-
-
-
-    }
-
-
-
-    private static Message prepareMessage(Session session,String myAccountEmail,String recepient,String msg) {
-        try {
-            Message message=new MimeMessage(session);
-            message.setFrom(new InternetAddress(myAccountEmail));
-            message.setRecipient(Message.RecipientType.TO, new InternetAddress (recepient));
-            message.setSubject("Attente de Confirmation d'inscription");
-            message.setText(msg);
-            message.reply(false);
-            return message;
-
-        }
-        catch(Exception e)
-        {
-            e.getMessage();
-        }
-        return null;
-    }*/
 
     @Override
     public Candidacy makeCandidacyRefused(int idcandidacy) {
@@ -132,6 +94,13 @@ public class RecuiterCandidacyService  implements IRecuiterCandidacyService{
         if(candidacy!=null)
         {
             candidacy.setTypeCandidacy(TypeCandidacy.Refus);
+            EmailDetails emailDetailsCandidate=new EmailDetails();
+            emailDetailsCandidate.setRecipient(candidacy.getCandidate().getEmail());
+            emailDetailsCandidate.setSubject("Candidacy");
+            emailDetailsCandidate.setMsgBody("Your Candidacy wich have date :"+ candidacy.getDateCreation()+" have been refused " +
+                    " . by the recruiter :  "+candidacy.getOffer().getRecruiter().getFirstName()+
+                    " "+candidacy.getOffer().getRecruiter().getLastName());
+            iEmailService.sendSimpleMail(emailDetailsCandidate);
             return  this.candidacyRepository.save(candidacy);
         }
         return null;
@@ -207,10 +176,18 @@ public class RecuiterCandidacyService  implements IRecuiterCandidacyService{
             if((candidacy.getOffer().getDateExpiration().before(date))&& !candidacy.getTypeCandidacy().equals(TypeCandidacy.Accepted)){
                 candidacyRepository.delete(candidacy);
                 System.err.println("candidacy over deleted");
+                EmailDetails emailDetailsCandidate=new EmailDetails();
+                emailDetailsCandidate.setRecipient(candidacy.getCandidate().getEmail());
+                emailDetailsCandidate.setSubject("Candidacy");
+                emailDetailsCandidate.setMsgBody("Your Candidacy "+ candidacy.getTypeCandidacy()+" have been deleted because the offer is expired" +
+                        " .\n So you can send mail for the recruiter :  "+candidacy.getOffer().getRecruiter().getFirstName()+
+                        " "+candidacy.getOffer().getRecruiter().getLastName() +" his mail : "+
+                        candidacy.getOffer().getRecruiter().getEmail());
+                iEmailService.sendSimpleMail(emailDetailsCandidate);
             }
         }
     }
-    @Scheduled(cron = "0 0 16 2 * ?")
+    @Scheduled(cron = "0 0 18 2 * ?")
     public void deleteCandidacyHavingOfferDateExpirationOverAndIsAcceptedOrProcessing(){
         List<Candidacy> candidacies=candidacyRepository.findAll();
         Date date= java.sql.Date.valueOf(new LocalDate().toString());
@@ -222,10 +199,91 @@ public class RecuiterCandidacyService  implements IRecuiterCandidacyService{
             if((candidacy.getOffer().getDateExpiration().after(date))&& (candidacy.getTypeCandidacy().equals(TypeCandidacy.Accepted) ||
                     candidacy.getTypeCandidacy().equals(TypeCandidacy.Processing))){
                 candidacyRepository.delete(candidacy);
+                EmailDetails emailDetailsCandidate=new EmailDetails();
+                emailDetailsCandidate.setRecipient(candidacy.getCandidate().getEmail());
+                emailDetailsCandidate.setSubject("Candidacy");
+                emailDetailsCandidate.setMsgBody("Your Candidacy "+ candidacy.getTypeCandidacy()+" have been deleted because is expired" +
+                        " .\n So you can send mail for the recruiter :  "+candidacy.getOffer().getRecruiter().getFirstName()+
+                        " "+candidacy.getOffer().getRecruiter().getLastName() +" his mail : "+
+                        candidacy.getOffer().getRecruiter().getEmail());
+                iEmailService.sendSimpleMail(emailDetailsCandidate);
                 System.err.println("candidacy for candidate CIN : "+candidacy.getCandidate().getCin()+" \n have a type :"+candidacy.getTypeCandidacy()+
                         " \n and over date is deleted ");
             }
         }
+    }
+    @Override
+    public Appointment addAppoitment(int idCandidacy,int idRecruiter) {
+        List<User> users=userRepository.findAll();
+        User user=new User();
+        for (User userr:users){
+            if(userr.getIdUser()==idRecruiter)
+                user=userr;
+        }
+        /*User user=userRepository.findById(idRecruiter).get();*/
+        System.err.println("****"+idCandidacy);
+        Candidacy candidacy=new Candidacy();
+        if(candidacyRepository.findById(idCandidacy).get()!=null)
+        {
+            candidacy=candidacyRepository.getReferenceById(idCandidacy);
+        }
+
+        Appointment appointment=new Appointment();
+
+        if(candidacy.getTypeCandidacy().equals(TypeCandidacy.Processing)){
+            appointment.setCandidacy(candidacy);
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime oneDayLater = now.plusDays(7);
+            Timestamp timestamp = Timestamp.valueOf(oneDayLater);
+            Date  date1= new Date(timestamp.getTime());
+            appointment.setDateAppointment(date1);
+            appointment.setRecruiter(user);
+            appointment.setLinkMeet("https://meet.google.com/pzk-sxkb-vgt?fbclid=IwAR1qg4ZLwkfjEMJz2cctgi5zRkLxfOtd7nz72fuCBuEdp-9YkBusfTzHMRw");
+            return appointmentRepository.save(appointment);
+        }
+
+        return null;
+    }
+    @Override
+    public Appointment updateAppointmentDate(int idAppointment, Date newDate) {
+
+        Appointment appointment=appointmentRepository.findById(idAppointment).get();
+        if (appointment!=null){
+            appointment.setDateAppointment(newDate);
+            return appointmentRepository.save(appointment);
+        }
+
+        return null;
+    }
+    @Override
+    public List<Appointment> getAppointmentsWithCloseDate(int idRecuiter)
+    {
+        User user=userRepository.findById(idRecuiter).get();
+        System.err.println(user.getEmail());
+        List<Appointment> appointments=appointmentRepository.findAll();
+        List<Appointment>appointments1=new ArrayList<>();
+        //DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        Timestamp timestamp = Timestamp.valueOf(now);
+        Date  date1= new Date(timestamp.getTime());
+        //System.out.println(dtf.format(now));
+        for(Appointment appointment:appointments){
+            if((appointment.getDateAppointment().getDay()+5>=date1.getDay())&&
+                    (appointment.getRecruiter().equals(user))){
+                appointments1.add(appointment);
+            }
+        }
+        return appointments1;
+    }
+    @Override
+    public boolean deleteAppointment(int idAppointment) {
+
+        Appointment appointment=appointmentRepository.findById(idAppointment).get();
+        if(appointment!=null){
+            appointmentRepository.delete(appointment);
+            return true;
+        }
+        return false;
     }
 
 }

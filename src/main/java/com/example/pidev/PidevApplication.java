@@ -1,6 +1,5 @@
 package com.example.pidev;
 
-import com.example.pidev.entities.Score;
 import com.example.pidev.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

@@ -8,7 +8,7 @@ import java.util.List;
 @Service
 public interface ICandidateAppointmentService {
 
-    public List<Appointment> getAllAppointmentByIdCandidate(int idCandidate);
-    public List<Appointment> getAppointmentsWithCloseDateAndIdCandidate(int idCandidate);
-    public Appointment getAppointmentByIdCandidacy(int idCandidacy);
+   // public List<Appointment> getAllAppointmentByIdCandidate(int idCandidate);
+    //public List<Appointment> getAppointmentsWithCloseDateAndIdCandidate(int idCandidate);
+    //public Appointment getAppointmentByIdCandidacy(int idCandidacy);
 }

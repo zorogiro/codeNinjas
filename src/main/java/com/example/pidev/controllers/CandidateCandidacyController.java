@@ -3,6 +3,7 @@ package com.example.pidev.controllers;
 import com.example.pidev.entities.*;
 import com.example.pidev.repositories.ScoreRepository;
 import com.example.pidev.services.CandidateCandidacyService;
+import com.example.pidev.services.IEmailService;
 import com.example.pidev.services.VerificationMoyenne;
 import com.example.pidev.util.FileUploadUtil;
 
@@ -25,17 +26,29 @@ public class CandidateCandidacyController {
     CandidateCandidacyService candidateCandidacyService;
     ScoreRepository scoreRepository;
     VerificationMoyenne verificationMoyenne;
+     IEmailService emailService;
+    @PostMapping("/sendMail")
+    public String
+    sendMail(@RequestBody EmailDetails details)
+    {
+        String status
+                = emailService.sendSimpleMail(details);
+
+        return status;
+    }
 
     @Transactional
     @PostMapping("/addCandidacy/{idCandidate}/{idOffer}")
     public Candidacy addCandidacy(@PathVariable("idCandidate") int idCandidate,
                                   @PathVariable("idOffer") int idOffer) {
         return this.candidateCandidacyService.addCandidacy(idCandidate, idOffer);
+
     }
 
     @Transactional
     @DeleteMapping("/deleteCandidacy/{idCandidacy}")
     public void deleteCandidacy(@PathVariable("idCandidacy") int idCandidacy) {
+        System.err.println(idCandidacy);
         this.candidateCandidacyService.deleteCandidacy(idCandidacy);
     }
 
@@ -43,6 +56,7 @@ public class CandidateCandidacyController {
     @GetMapping("/getCandidacyById/{idCandidate}")
     public List<Candidacy> getCandidacyById(@PathVariable("idCandidate") int idCandidate) {
         return this.candidateCandidacyService.findCandidacyByidCandidate(idCandidate);
+        //return scoreRepository.findScoreByCinUser("06996868");
     }
 
     @Transactional
@@ -72,7 +86,21 @@ public class CandidateCandidacyController {
         fileUploadResponse.setDownloadUri("/downloadFile");
         fileUploadResponse.setSize(size);
         return new ResponseEntity<FileUploadResponse>(fileUploadResponse, HttpStatus.OK);
+    }
+    @GetMapping("/getAppointmentByIdCandidacy/{idCandidacy}")
+    @Transactional
+    public Appointment getAppointmentByIdCandidacy(@PathVariable("idCandidacy") int idCandidacy){
+        return this.candidateCandidacyService.getAppointmentByIdCandidacy(idCandidacy);
+    }
 
-
+    @GetMapping("/getAppointmentsWithCloseDateAndIdCandidate/{idCandidate}")
+    @Transactional
+    public List<Appointment> getAppointmentsWithCloseDateAndIdCandidate(@PathVariable("idCandidate") int idCandidate){
+        return this.candidateCandidacyService.getAppointmentsWithCloseDateAndIdCandidate(idCandidate);
+    }
+    @GetMapping("/getAllAppointmentByIdCandidate/{idCandidate}")
+    @Transactional
+    public List<Appointment> getAllAppointmentByIdCandidate(@PathVariable("idCandidate") int idCandidate){
+        return this.candidateCandidacyService.getAllAppointmentByIdCandidate(idCandidate);
     }
 }

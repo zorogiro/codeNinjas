@@ -28,6 +28,8 @@ public class CandidateCandidacyService implements ICandidateCandidacyService{
     UserRepository userRepository;
     @Autowired
     AppointmentRepository appointmentRepository;
+    @Autowired
+    IEmailService iEmailService;
     @Override
     public Candidacy addCandidacy(int idCandidate, int idOffer) {
 
@@ -46,7 +48,24 @@ public class CandidateCandidacyService implements ICandidateCandidacyService{
 
             Date date= java.sql.Date.valueOf(new LocalDate().toString());
             candidacy.setDateCreation(date);
-            return this.candidacyRepository.save(candidacy);
+
+            Candidacy candidacy1= this.candidacyRepository.save(candidacy);
+            EmailDetails emailDetailsCandidate=new EmailDetails();
+            emailDetailsCandidate.setRecipient(candidacy.getCandidate().getEmail());
+            emailDetailsCandidate.setSubject("Candidacy");
+            emailDetailsCandidate.setMsgBody("Your Candidacy have been added .\n So your Candidacy is On Hold");
+            iEmailService.sendSimpleMail(emailDetailsCandidate);
+            /////
+            EmailDetails emailDetailsRecuiter=new EmailDetails();
+            emailDetailsRecuiter.setMsgBody("You have a new Candidacy for a Candidate name :\t "
+                    +candidacy.getCandidate().getFirstName()+" "+candidacy.getCandidate().getLastName()
+                    +" \n "+
+                    "http://localhost:8089/pidev/recuiterCandidacy/showCandidacyByidOffre/"+ offer.getIdOffer());
+            System.err.println(offer.getRecruiter().getEmail());
+            emailDetailsRecuiter.setRecipient(candidacy.getOffer().getRecruiter().getEmail());
+            emailDetailsRecuiter.setSubject("New Candidacy");
+            System.err.println(iEmailService.sendSimpleMail(emailDetailsRecuiter));
+            return candidacy1;
         }
         return null;
     }
@@ -55,13 +74,28 @@ public class CandidateCandidacyService implements ICandidateCandidacyService{
     public void deleteCandidacy(int idCandidacy) {
         List<Appointment> appointments=appointmentRepository.findAll();
         Candidacy candidacy=candidacyRepository.findById(idCandidacy).get();
+
         for(Appointment appointment:appointments){
-            if(appointment.getCandidacy().equals(candidacy)){
+            if(appointment.getCandidacy().getIdCandidacy()==idCandidacy){
                 appointmentRepository.delete(appointment);
+                break;
             }
         }
-
-        this.candidacyRepository.delete(candidacy);
+        EmailDetails emailDetailsCandidate=new EmailDetails();
+        emailDetailsCandidate.setRecipient(candidacy.getCandidate().getEmail());
+        emailDetailsCandidate.setSubject("Candidacy");
+        emailDetailsCandidate.setMsgBody("Your Candidacy have been deleted .\n ");
+        iEmailService.sendSimpleMail(emailDetailsCandidate);
+        /////
+        EmailDetails emailDetailsRecuiter=new EmailDetails();
+        emailDetailsRecuiter.setMsgBody("You have a  Candidacy  deleted for a Candidate name :\t "
+                +candidacy.getCandidate().getFirstName()+" "+candidacy.getCandidate().getLastName());
+        //System.err.println(candidacy.getOffer().getc);
+        emailDetailsRecuiter.setRecipient(candidacy.getOffer().getRecruiter().getEmail());
+        emailDetailsRecuiter.setSubject(" Candidacy deleted");
+        System.err.println(iEmailService.sendSimpleMail(emailDetailsRecuiter));
+        System.err.println(idCandidacy);
+        this.candidacyRepository.deleteById(idCandidacy);
         System.err.println("Candidacy deleted");
     }
 
@@ -135,7 +169,48 @@ public class CandidateCandidacyService implements ICandidateCandidacyService{
             }
         }
         return candidaciesFinal;
+    }
+    @Override
 
+    public List<Appointment> getAllAppointmentByIdCandidate(int idCandidate) {
+        User candidate= userRepository.findById(idCandidate).get();
+        List<Appointment> appointmentList=appointmentRepository.findAll();
+        List<Appointment> appointments=new ArrayList<>();
+        if(appointmentList!=null)
+            for(Appointment appointment: appointmentList){
+                if(appointment.getCandidacy().getCandidate().equals(candidate)){
+                    appointments.add(appointment);
+                }
+            }
+        return appointments;
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsWithCloseDateAndIdCandidate(int idCandidate) {
+        User candidate= userRepository.findById(idCandidate).get();
+        List<Appointment> appointmentList=appointmentRepository.findAll();
+        List<Appointment> appointments=new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        Timestamp timestamp = Timestamp.valueOf(now);
+        Date date1= new Date(timestamp.getTime());
+        if(appointmentList!=null)
+            for(Appointment appointment: appointmentList){
+                if((appointment.getDateAppointment().getDay()+5>=date1.getDay())&&appointment.getCandidacy().getCandidate().equals(candidate)){
+                    appointments.add(appointment);
+                }
+            }
+        return appointments;
+    }
+
+    @Override
+    public Appointment getAppointmentByIdCandidacy(int idCandidacy) {
+        List<Appointment> appointments=appointmentRepository.findAll();
+        Candidacy candidacy=candidacyRepository.findById(idCandidacy).get();
+        for(Appointment appointment:appointments){
+            if(appointment.getCandidacy().equals(candidacy))
+                return appointment;
+        }
+        return null;
     }
 
 }
