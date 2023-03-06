@@ -32,6 +32,7 @@ public class University implements Serializable {
     @JoinColumn(name = "recruterId", referencedColumnName = "userId")
     @JsonIgnore
     private User Recruiter;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy="university")
     @JsonIgnore
     private Set<Offer> Offers;

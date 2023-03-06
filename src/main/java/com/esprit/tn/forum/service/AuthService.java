@@ -1,14 +1,13 @@
 package com.esprit.tn.forum.service;
 
 import com.esprit.tn.forum.dto.AuthenticationResponse;
+import com.esprit.tn.forum.model.*;
+import com.esprit.tn.forum.repository.UniversityRepository;
 import com.esprit.tn.forum.security.JwtProvider;
 import com.esprit.tn.forum.dto.LoginRequest;
 import com.esprit.tn.forum.dto.RefreshTokenRequest;
 import com.esprit.tn.forum.dto.RegisterRequest;
 import com.esprit.tn.forum.exceptions.ForumException;
-import com.esprit.tn.forum.model.NotificationEmail;
-import com.esprit.tn.forum.model.User;
-import com.esprit.tn.forum.model.VerificationToken;
 import com.esprit.tn.forum.repository.UserRepository;
 import com.esprit.tn.forum.repository.VerificationTokenRepository;
 import lombok.AllArgsConstructor;
@@ -23,7 +22,9 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
+import java.time.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,16 +41,22 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
 
+    private final UniversityRepository universityRepository;
+
     public void signup(RegisterRequest registerRequest) {
         User user = new User();
         user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setCreated(Instant.now());
+       user.setTypeUser(registerRequest.getTypeUser());
         user.setEnabled(false);
-
+        University university = universityRepository.findById(registerRequest.getUniversityId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid university ID"));
+        user.setUniversity(university);
+        university.setRecruiter(user);
         userRepository.save(user);
-
+        universityRepository.save(university);
         String token = generateVerificationToken(user);
         mailService.sendMail(new NotificationEmail("Please Activate your Account",
                 user.getEmail(), "Thank you for signing up to Spring Reddit, " +
@@ -111,8 +118,28 @@ public class AuthService {
                 .build();
     }
 
+    public Map<String, Integer> getUserStats() {
+        int adminCount = userRepository.countByRole(TypeUser.Admin);
+        int recuiterCount = userRepository.countByRole(TypeUser.Candidate);
+        int condidateCount = userRepository.countByRole(TypeUser.Recruiter);
+
+        Map<String, Integer> stats = new HashMap<>();
+
+        stats.put("adminCount", adminCount);
+        stats.put("recuiterCount", recuiterCount);
+        stats.put("condidateCount", condidateCount);
+
+        return stats;
+    }
+
     public boolean isLoggedIn() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
+    }
+
+    public int countUsersByTypeAndMonth(TypeUser typeUser, int year, int month) {
+        Instant startDate = LocalDateTime.of(year, month, 1, 0, 0, 0).toInstant(ZoneOffset.UTC);
+        Instant endDate = LocalDateTime.of(year, month, Month.of(month).length(Year.isLeap(year)), 23, 59, 59).toInstant(ZoneOffset.UTC);
+        return userRepository.countByTypeUserAndCreatedDateBetween(typeUser, startDate, endDate);
     }
 }

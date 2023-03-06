@@ -27,6 +27,7 @@ public class User {
     @Email
     @NotEmpty(message = "Email is required")
     private String email;
+    @Column(columnDefinition = "TIMESTAMP")
     private Instant created;
     private boolean enabled;
     private int alertCount;
@@ -37,7 +38,9 @@ public class User {
     public BadgeType postBadge;
     @Enumerated(EnumType.STRING)
     public BadgeType CommentBadge;
-
+    @OneToOne
+    @JoinColumn(name = "recruterId")
+    private University university;
 
     public boolean isAdmin() {
         return getTypeUser().equals(TypeUser.Admin);
@@ -48,10 +51,8 @@ public class User {
     }
 
     public boolean isRecruter(User user) {
-        return getTypeUser().equals(TypeUser.Recruter);
+        return getTypeUser().equals(TypeUser.Recruiter);
     }
 
-    private enum TypeUser {
-        Recruter, Admin, Candidate
-    }
+
 }

@@ -11,5 +11,7 @@ public class RegisterRequest {
     private String email;
     private String username;
     private String password;
+    private com.esprit.tn.forum.model.TypeUser typeUser;
+    private Long universityId;
 
 }
