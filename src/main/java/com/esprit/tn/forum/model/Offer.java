@@ -40,15 +40,12 @@ public class Offer implements Serializable {
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "recruiterId", referencedColumnName = "userId")
     private User recruiter;
-//    @OneToMany(cascade = CascadeType.ALL  , mappedBy = "offer" , fetch = LAZY)
-//    @JsonIgnoreProperties("offer")
-//    private List<Candidacy> candidacies;
     @ManyToOne
     University university;
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "offer")
-    @JsonIgnore
-    private List<Candidacy> candidacies;
+//    @OneToMany(cascade = CascadeType.ALL,mappedBy = "offer")
+//    @JsonIgnore
+//    private List<Candidacy> candidacies;
 
 
 }

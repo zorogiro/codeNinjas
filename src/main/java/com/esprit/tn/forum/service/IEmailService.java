@@ -9,5 +9,5 @@ public interface IEmailService {
 
     // Method
     // To send an email with attachment
-    String sendMailWithAttachment(EmailDetails details);
+//    String sendMailWithAttachment(EmailDetails details);
 }

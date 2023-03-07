@@ -2,6 +2,7 @@ package com.esprit.tn.forum.repository;
 
 
 import com.esprit.tn.forum.dto.OfferDto;
+import com.esprit.tn.forum.model.Candidacy;
 import com.esprit.tn.forum.model.Offer;
 import com.esprit.tn.forum.model.TypeOffer;
 import com.esprit.tn.forum.model.User;
@@ -24,6 +25,8 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
     List<OfferDto> findByDateExpirationBefore(LocalDateTime now);
 
     List<Offer> findByDateExpirationAfter(LocalDateTime now);
+
+
 
 
 }

@@ -24,7 +24,6 @@ public class User {
     private String username;
     @NotBlank(message = "Password is required")
     private String password;
-    @NotBlank(message = "CIN is required")
     private  String cin;
     @Email
     @NotEmpty(message = "Email is required")
@@ -40,9 +39,7 @@ public class User {
     public BadgeType postBadge;
     @Enumerated(EnumType.STRING)
     public BadgeType CommentBadge;
-    @OneToOne
-    @JoinColumn(name = "recruterId")
-    private University university;
+
 
     public boolean isAdmin() {
         return getTypeUser().equals(TypeUser.Admin);

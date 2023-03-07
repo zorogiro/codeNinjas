@@ -54,8 +54,8 @@ public class CandidateCandidacyController {
     }
 
     @Transactional
-    @GetMapping("/getCandidacyById")
-    public List<Candidacy> getCandidacyById() {
+    @GetMapping("/getCandidacy")
+    public List<Candidacy> getCandidacy() {
         return this.candidateCandidacyService.findCandidacyByidCandidate();
         //return scoreRepository.findScoreByCinUser("06996868");
     }

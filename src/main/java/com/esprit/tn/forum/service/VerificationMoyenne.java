@@ -95,9 +95,9 @@ public class VerificationMoyenne {
     }
     public Score calculscore(int idCandidacy, String fileName) throws IOException {
 
-        String csvFilePath = "C:\\Users\\pc\\Downloads\\codeNinjas-houssem\\src\\main\\java\\com\\example\\pidev\\Files-Upload\\"+fileName;
+        String csvFilePath = "C:\\Users\\Mon Pc\\Documents\\GitHub\\codeNinjas1\\src\\main\\java\\com\\esprit\\tn\\forum\\FilesUpload"+fileName;
         Map<String, Map<String, String>> CSVData = new TreeMap<String, Map<String, String>>();
-        Path root = Paths.get("C:\\Users\\pc\\Downloads\\codeNinjas-houssem\\src\\main\\java\\com\\example\\pidev\\Files-Upload");
+        Path root = Paths.get("C:\\Users\\Mon Pc\\Documents\\GitHub\\codeNinjas1\\src\\main\\java\\com\\esprit\\tn\\forum\\FilesUpload");
         Map<String, String> keyVals = null;
         Reader reader = new FileReader(csvFilePath);
         try {

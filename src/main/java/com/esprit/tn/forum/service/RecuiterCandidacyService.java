@@ -110,14 +110,9 @@ public class RecuiterCandidacyService  implements IRecuiterCandidacyService{
     @Override
     public List<Candidacy> showCandidacyByidOffre(int idOffre) {
         Offer offer=this.offerRepository.findById(Long.valueOf(idOffre)).get();
-        List<Candidacy> candidacies= offer.getCandidacies();
-        List<Candidacy> candidacyList=new ArrayList<>();
-        for(Candidacy c:candidacies)
-        {
-            if(c.getOffer().equals(offer))
-                candidacyList.add(c);
-        }
-        return candidacyList;
+         List<Candidacy> candidacies= candidacyRepository.getCandidaciesByOffer(offer);
+         return candidacies;
+
     }
 
     @Override

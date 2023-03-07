@@ -41,7 +41,7 @@ public class CandidateCandidacyService implements ICandidateCandidacyService{
         System.out.println(user.getTypeUser());
         Offer offer=this.offerRepository.findById(Long.valueOf(idOffer)).get();
         System.out.println(offer.getScoreOffer());
-        if(user.getTypeUser().equals(TypeUser.Candidate))
+        if(user.isCandidate())
         {
             Candidacy candidacy=new Candidacy();
 

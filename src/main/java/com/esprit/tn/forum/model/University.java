@@ -1,6 +1,7 @@
 package com.esprit.tn.forum.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +31,7 @@ public class University implements Serializable {
     private Country country;
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "recruterId", referencedColumnName = "userId")
-    @JsonIgnore
+    @JsonIgnoreProperties
     private User Recruiter;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy="university")

@@ -46,7 +46,7 @@ public class EmailServiceImpl  implements IEmailService{
         }
     }
 
-    @Override
+   /* @Override
     public String sendMailWithAttachment(EmailDetails details) {
         MimeMessage mimeMessage
                 = javaMailSender.createMimeMessage();
@@ -83,5 +83,5 @@ public class EmailServiceImpl  implements IEmailService{
             // Display message when exception occurred
             return "Error while sending mail!!!";
         }
-    }
+    }*/
 }

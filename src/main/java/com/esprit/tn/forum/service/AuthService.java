@@ -51,12 +51,7 @@ public class AuthService {
         user.setCreated(Instant.now());
        user.setTypeUser(registerRequest.getTypeUser());
         user.setEnabled(false);
-        University university = universityRepository.findById(registerRequest.getUniversityId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid university ID"));
-        user.setUniversity(university);
-        university.setRecruiter(user);
         userRepository.save(user);
-        universityRepository.save(university);
         String token = generateVerificationToken(user);
         mailService.sendMail(new NotificationEmail("Please Activate your Account",
                 user.getEmail(), "Thank you for signing up to Spring Reddit, " +

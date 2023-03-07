@@ -3,6 +3,7 @@ package com.esprit.tn.forum.controller;
 import com.esprit.tn.forum.dto.PostRequest;
 import com.esprit.tn.forum.dto.PostResponse;
 import com.esprit.tn.forum.service.PostService;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
+    @ApiOperation("createPost")
     public ResponseEntity<Void> createPost(@RequestBody PostRequest postRequest) {
         postService.save(postRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
