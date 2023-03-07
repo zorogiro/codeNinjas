@@ -24,6 +24,8 @@ public class User {
     private String username;
     @NotBlank(message = "Password is required")
     private String password;
+    @NotBlank(message = "CIN is required")
+    private  String cin;
     @Email
     @NotEmpty(message = "Email is required")
     private String email;

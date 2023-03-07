@@ -46,5 +46,9 @@ public class Offer implements Serializable {
     @ManyToOne
     University university;
 
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "offer")
+    @JsonIgnore
+    private List<Candidacy> candidacies;
+
 
 }

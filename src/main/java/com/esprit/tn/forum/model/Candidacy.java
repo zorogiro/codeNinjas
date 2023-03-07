@@ -1,17 +1,17 @@
 package com.esprit.tn.forum.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-
-import static javax.persistence.FetchType.LAZY;
 
 @Getter
 @Setter
@@ -19,21 +19,29 @@ import static javax.persistence.FetchType.LAZY;
 @AllArgsConstructor
 @Entity
 @Table(name = "Candidacy")
+
 public class Candidacy implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idCandidacy")
-    private Long idCandidacy;
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "candidateId", referencedColumnName = "userId")
+    private int idCandidacy;
+    @ManyToOne
+    @JsonIgnore
+    @NotFound(action = NotFoundAction.IGNORE)
     private User candidate;
     @ManyToOne
+    @JsonIgnore
+    @NotFound(action = NotFoundAction.IGNORE)
     private Offer offer;
     @OneToOne(mappedBy = "candidacy")
+    @JsonIgnore
+    @NotFound(action = NotFoundAction.IGNORE)
     private Appointment appointment;
-    private LocalDateTime dateCreation;
+    private Date dateCreation;
     @Enumerated(EnumType.STRING)
-    private Status status;
-    private double scoreStudent;
-
+    private TypeCandidacy typeCandidacy;
+    @OneToMany(mappedBy = "candidacy")
+    @JsonIgnore
+    @NotFound(action = NotFoundAction.IGNORE)
+    private List<Feedback> feedbacks;
 }

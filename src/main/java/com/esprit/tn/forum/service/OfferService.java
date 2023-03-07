@@ -181,7 +181,7 @@ public class OfferService {
         List<Candidacy> candidacies =candidateRepository.findCandidaciesByOffer(offer);
         for (Candidacy candidacy: candidacies) {
             if (offer.getNbrPlaceDisponible() != 0) {
-                if (candidacy.getStatus() == Status.Accepted) {
+                if (candidacy.getTypeCandidacy() == TypeCandidacy.Accepted) {
                     offer.setNbrPlaceDisponible(offer.getNbrPlaceDisponible() - 1);
                 }
             }

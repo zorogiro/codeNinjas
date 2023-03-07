@@ -8,9 +8,6 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-
-import static javax.persistence.FetchType.LAZY;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,8 +22,7 @@ public class Appointment implements Serializable {
     private String linkMeet;
     @OneToOne
     private Candidacy candidacy;
-    @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "userId", referencedColumnName = "userId")
-    private User Candidate;
+    @OneToOne
+    private User recruiter;
     private Date dateAppointment;
 }
