@@ -1,4 +1,4 @@
-package com.esprit.tn.forum.service;
+    package com.esprit.tn.forum.service;
 
 import com.esprit.tn.forum.model.Feedback;
 import com.esprit.tn.forum.model.Offer;
@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +38,8 @@ public class candidatFeedbackService implements IcandidatFeedback {
         User user = authService.getCurrentUser();
         Offer offer = this.offerRepository.getById(idoffer);
         f.setOffer(offer);
-        f.setDateCreation(new Date());
+        f.setDateCreation(LocalDateTime.now());
+        f.setUser(user);
         f.setStatus("en attente");
 
         return this.feedbackRepository.save(f);
@@ -47,12 +49,15 @@ public class candidatFeedbackService implements IcandidatFeedback {
     public Feedback updatecandidatFeedback(Feedback f) {
 
         f.setStatus("traité");
+
         return this.feedbackRepository.save(f);
     }
 
     @Override
     public Feedback updatecandidatFeedbackk(Feedback f) {
         f.setStatus("non traité");
+        f.setPriority("il faut le traite dans deux semaines ");
+        f.setDateLimite(f.getDateCreation());
         return this.feedbackRepository.save(f);
     }
 

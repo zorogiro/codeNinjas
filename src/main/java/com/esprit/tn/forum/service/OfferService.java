@@ -3,10 +3,7 @@ package com.esprit.tn.forum.service;
 import com.esprit.tn.forum.dto.OfferDto;
 import com.esprit.tn.forum.mapper.OfferMapper;
 import com.esprit.tn.forum.model.*;
-import com.esprit.tn.forum.repository.CandidateRepository;
-import com.esprit.tn.forum.repository.OfferRepository;
-import com.esprit.tn.forum.repository.UniversityRepository;
-import com.esprit.tn.forum.repository.UserRepository;
+import com.esprit.tn.forum.repository.*;
 import com.opencsv.exceptions.CsvValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +32,8 @@ public class OfferService {
     private OfferMapper offerMapper;
     @Autowired
     private CsvService csvService;
+    @Autowired
+    private CandidacyRepository candidacyRepository;
 
 
 
@@ -52,7 +48,7 @@ public class OfferService {
         offer.setDateExpiration(LocalDateTime.now().plusDays(15));
         return offerRepository.save(offer);}
 
-        return null;
+        throw new RuntimeException("u are not allowd");
     }
 
 
@@ -81,6 +77,7 @@ public class OfferService {
         List<OfferDto> offerDtos = new ArrayList<>();
         for (Candidacy candidacy: candidacies) {
             OfferDto offerDto = offerMapper.toDto(candidacy.getOffer());
+            offerDto.setTypeCandidacy(getApplicationStatus(candidacy.getOffer().getIdOffer()));
             offerDtos.add(offerDto);
         }
 
@@ -102,10 +99,17 @@ public class OfferService {
 
 
 
+
+
     @Transactional(readOnly = true)
     public List<OfferDto> getAllOffer(){
+        User user =authService.getCurrentUser();
         List<Offer> offers = offerRepository.findAll();
-        return offers.stream().map(offerMapper::toDto).collect(Collectors.toList());
+        if (!user.isCandidate()) {
+            return offers.stream().map(offerMapper::toDto).collect(Collectors.toList());
+
+        }
+        throw new RuntimeException("not allowd");
     }
 
 
@@ -128,10 +132,10 @@ public class OfferService {
         }
         return null;
     }
-//
-//    public Map<TypeOffer, Long> getNOfferByType(TypeOffer typeOffer) {
-//        return offerRepository.countOfferByTypeOffer(typeOffer);
-//    }
+
+    public Map<TypeOffer, Long> getNOfferByType(TypeOffer typeOffer) {
+        return offerRepository.countOfferByTypeOffer(typeOffer);
+    }
 
 
     public List<OfferDto> getOfferByType(TypeOffer typeOffer){
@@ -151,11 +155,11 @@ public class OfferService {
 //                .equals(candidacy.getCandidate().getUserId(), studentId));
 //    }
 
-    public TypeOffer getApplicationStatus(Long offerId) {
+    public TypeCandidacy getApplicationStatus(Long offerId) {
         User student = authService.getCurrentUser();
         Offer offer = offerRepository.findById(offerId).get() ;
         Candidacy application = candidateRepository.findByCandidateAndOffer(student, offer);
-        return application.getOffer().getTypeOffer();
+        return application.getTypeCandidacy();
     }
 
     public List<OfferDto> getValidOffers() {
@@ -177,7 +181,7 @@ public class OfferService {
     }
 
 
-    int getNbrOfAvailablePlaces(Offer offer){
+    public int getNbrOfAvailablePlaces(Offer offer){
         List<Candidacy> candidacies =candidateRepository.findCandidaciesByOffer(offer);
         for (Candidacy candidacy: candidacies) {
             if (offer.getNbrPlaceDisponible() != 0) {
@@ -205,16 +209,13 @@ public class OfferService {
 
             switch (typeOffer) {
                 case DS:
-                    score = (csvRow.getMath() + csvRow.getPython() + csvRow.getAdf() + csvRow.getSpring()) / 4;
+                    score = (csvRow.getMath()*2 + csvRow.getPython()*2 + csvRow.getAdf() + csvRow.getAng()*3 +csvRow.getMoy4()*4 +csvRow.getMoy3()*3) ;
                     break;
                 case BI:
-                    score = (csvRow.getMath() + csvRow.getPython() + csvRow.getAdf() + csvRow.getSpring() + csvRow.getGl()) / 5;
+                    score = (csvRow.getMath() + csvRow.getPython() + csvRow.getAdf()*2 + csvRow.getSpring()+csvRow.getMoy4()*4 +csvRow.getMoy3()*3);
                     break;
                 case SAE:
-                    score = (csvRow.getMoy3() + csvRow.getMoy4() + csvRow.getAng() + csvRow.getFr()) / 4;
-                    break;
-                case GC:
-                    score = (csvRow.getMath() + csvRow.getPython() + csvRow.getAdf() + csvRow.getSpring() + csvRow.getGl() + csvRow.getFr() + csvRow.getAng()) / 7;
+                    score = (csvRow.getMoy3()*3 + csvRow.getMoy4()*4 + csvRow.getAng() + csvRow.getFr() + csvRow.getSpring()*3 + csvRow.getGl()*2);
                     break;
                 default:
                     throw new IllegalArgumentException("Invalid offer type: " + typeOffer);

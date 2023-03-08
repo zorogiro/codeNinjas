@@ -69,6 +69,7 @@ public class CandidateCandidacyService implements ICandidateCandidacyService{
             emailDetailsRecuiter.setRecipient(candidacy.getOffer().getRecruiter().getEmail());
             emailDetailsRecuiter.setSubject("New Candidacy");
             System.err.println(iEmailService.sendSimpleMail(emailDetailsRecuiter));
+            offer.setApplied(true);
             return candidacy1;
         }
         return null;

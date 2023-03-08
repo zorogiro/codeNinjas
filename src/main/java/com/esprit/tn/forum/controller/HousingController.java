@@ -11,7 +11,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/housing/")
+@RequestMapping("/api/housing/")
 public class HousingController {
 
     IHousingService housingService;

@@ -36,8 +36,9 @@ public class UniversityService {
             university.setRecruiter(user);
             return universityRepository.save(university);
         }
-        return null;
+        throw new RuntimeException("u are not allowd");
     }
+
 
     public University updateUniversity(Long id, University universityDetails) {
         Optional<University> universityOptional = universityRepository.findById(id);
@@ -46,7 +47,7 @@ public class UniversityService {
             university.setName(universityDetails.getName());
             return universityRepository.save(university);
         } else {
-            return null;
+            throw new RuntimeException("u are not allowd");
         }
     }
 
@@ -54,10 +55,10 @@ public class UniversityService {
         Optional<University> universityOptional = universityRepository.findById(id);
         User user = authService.getCurrentUser();
         if(!user.isCandidate()) {
-            if (universityOptional.isPresent()) {
                 universityRepository.delete(universityOptional.get());
-            }
+
         }
+        throw new RuntimeException("u are not allowd");
     }
 
 

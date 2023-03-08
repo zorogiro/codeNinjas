@@ -3,15 +3,18 @@ package com.esprit.tn.forum.controller;
 import com.esprit.tn.forum.dto.OfferDto;
 import com.esprit.tn.forum.model.Offer;
 import com.esprit.tn.forum.model.TypeOffer;
+import com.esprit.tn.forum.repository.OfferRepository;
 import com.esprit.tn.forum.service.CsvService;
 import com.esprit.tn.forum.service.OfferService;
 import com.opencsv.exceptions.CsvValidationException;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/offre")
@@ -20,6 +23,7 @@ import java.util.List;
 public class OffreController {
 
     private final OfferService offerService;
+    private final OfferRepository offerRepository;
     private final CsvService csvService;
 
     @GetMapping
@@ -37,11 +41,13 @@ public class OffreController {
         offerService.addOffer(offer, idUniv);
     }
 
+    @PreAuthorize("hasRole('Recruiter')")
     @PutMapping
     public void updatePOffre(@RequestBody Offer offre) {
         offerService.updateOffre(offre);
     }
 
+    @PreAuthorize("hasRole('Recruiter')")
     @DeleteMapping("/deleteOffre/{Offre-id}")
     public void deleteOffer(@PathVariable("Offre-id") Long OffreId) {
         offerService.deleteOffre(OffreId);
@@ -64,14 +70,19 @@ public class OffreController {
         return offerService.getScore(typeOffer);
 
     }
-//
-//    @GetMapping("/compareScores/{idoffer}")
-//    public String compareScores(@PathVariable Long idoffer) throws IOException {
-//        return offerService.compareScores(idoffer);
-//    }
 
-//    @GetMapping("/hideAvailablePlaces/{idoffer}")
-//    public String hideAvailablePlaces(@PathVariable Long idoffer, List<Candidacy> candidates) throws IOException {
-//        return offerService.hideAvailablePlaces(idoffer, candidates);
-//    }
+    @GetMapping("/studentOffer")
+    public List<OfferDto> getStudentOffers() {
+        return offerService.getStudentOffers();
+
+    }
+
+    @GetMapping("stat/{typeOffer}")
+    public Map<TypeOffer, Long> getNOfferByType(@PathVariable("typeOffer") TypeOffer typeOffer){
+        return offerService.getNOfferByType(typeOffer);
+    }
+
+
+
+
 }

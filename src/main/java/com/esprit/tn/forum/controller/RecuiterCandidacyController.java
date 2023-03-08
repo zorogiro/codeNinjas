@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping( "/recuiterCandidacy")
+@RequestMapping( "/api/recuiterCandidacy")
 public class RecuiterCandidacyController {
 
     RecuiterCandidacyService recuiterCandidacyService;

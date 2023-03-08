@@ -7,6 +7,7 @@ import com.esprit.tn.forum.service.IrecruiterFeedbackService;
 import com.esprit.tn.forum.service.candidatFeedbackService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/feedback/")
+@RequestMapping("/api/feedback/")
 public class FeedbackController {
 
     IrecruiterFeedbackService iFeedbackService;
@@ -24,9 +25,11 @@ public class FeedbackController {
     @Autowired
     private FeedbackRepository feedbackRepository;
 
+
+    @PreAuthorize("hasRole('Recruiter')")
     @Transactional
     @PostMapping("addfeedbackCandidacy/{idcandidacy}")
-    public Feedback addFeedback(@RequestBody Feedback feedback, @PathVariable("idcandidacy") Long idcandidacy) {
+    public Feedback addFeedback(@RequestBody Feedback feedback, @PathVariable("idcandidacy") int idcandidacy) {
         return iFeedbackService.addFeedback(feedback, idcandidacy);
     }
 
@@ -62,9 +65,7 @@ public class FeedbackController {
 
     @PutMapping("/updatefeedbackcandidat2/{idfeedback}")
     public Feedback updatecandidatFeedbackk(@RequestBody Feedback feedback, @PathVariable String idfeedback) {
-        feedback.setStatus("non traité");
-        feedback.setPriority("il faut le traite dans deux semaines ");
-        feedback.setDateLimite(new Date());
+
         return icandidatFeedback.updatecandidatFeedbackk(feedback);
     }
 

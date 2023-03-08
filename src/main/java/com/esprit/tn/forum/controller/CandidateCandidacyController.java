@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/candidacy")
+@RequestMapping("/api/candidacy")
 public class CandidateCandidacyController {
     ScoreRepository scoreRepository;
     CandidateCandidacyService candidateCandidacyService;

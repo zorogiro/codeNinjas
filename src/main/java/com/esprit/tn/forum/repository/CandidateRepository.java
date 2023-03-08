@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 @Repository
-public interface CandidateRepository extends JpaRepository<Candidacy, Long> {
+public interface CandidateRepository extends JpaRepository<Candidacy, Integer> {
 
 
     Candidacy findByCandidateAndOffer(User student, Offer offer);

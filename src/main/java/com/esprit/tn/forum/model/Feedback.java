@@ -11,8 +11,10 @@ import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 
 @Getter
@@ -23,25 +25,27 @@ import static javax.persistence.FetchType.LAZY;
 @Table(name = "Feedback")
 @Proxy(lazy = false)
 
-public class Feedback implements Serializable {
+public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idFeedback;
     private String subject;
     private String content;
     @ManyToOne
+    @JsonIgnore
     private Offer offer;
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "userId")
+    @JsonIgnore
     private User user;
     @ManyToOne
     @JsonIgnore
     private Candidacy candidacy;
-    private Date dateCreation;
+    private LocalDateTime dateCreation;
     private int rating;
     private String priority;
     private String status;
-    private Date dateLimite;
+    private LocalDateTime dateLimite;
 
 
 }

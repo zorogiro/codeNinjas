@@ -1,5 +1,6 @@
 package com.esprit.tn.forum.dto;
 
+import com.esprit.tn.forum.model.TypeCandidacy;
 import com.esprit.tn.forum.model.TypeOffer;
 import lombok.Data;
 import lombok.Getter;
@@ -21,5 +22,6 @@ public class OfferDto {
     private Long recruiterId;
     private Long universityId;
     private boolean applied;
+    private TypeCandidacy typeCandidacy;
 
 }

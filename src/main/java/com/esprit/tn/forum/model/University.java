@@ -27,14 +27,11 @@ public class University implements Serializable {
     private String name;
     private String Email;
     private String image;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Country country;
-    @OneToOne(fetch = LAZY)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "recruterId", referencedColumnName = "userId")
-    @JsonIgnoreProperties
+    @JsonIgnore
     private User Recruiter;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy="university")
-    @JsonIgnore
-    private Set<Offer> Offers;
 }

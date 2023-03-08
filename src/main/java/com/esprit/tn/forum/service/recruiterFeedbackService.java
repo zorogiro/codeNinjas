@@ -13,6 +13,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -33,7 +35,7 @@ public class recruiterFeedbackService implements IrecruiterFeedbackService {
     }
 
     @Override
-    public Feedback addFeedback(Feedback f, Long idcondidacy) {
+    public Feedback addFeedback(Feedback f, int idcondidacy) {
 
         User user = authService.getCurrentUser();
         if (!user.isCandidate()) {
@@ -41,6 +43,7 @@ public class recruiterFeedbackService implements IrecruiterFeedbackService {
             Candidacy candidacy = condidacyRepository.findById(idcondidacy).get();
             f.setCandidacy(candidacy);
             f.setStatus("en attente");
+            f.setDateCreation(LocalDateTime.now());
             return this.feedbackRepository.save(f);
         }
         throw new RuntimeException("u don't have access");

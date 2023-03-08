@@ -10,7 +10,7 @@ public interface IrecruiterFeedbackService {
 
     List<Feedback> retrieveAllFeedback();
 
-    Feedback addFeedback(Feedback f, Long idcondidacy);
+    Feedback addFeedback(Feedback f, int idcondidacy);
 
     Feedback updateFeedbackrecruiter(Feedback f);
 
